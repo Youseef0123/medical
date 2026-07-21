@@ -1,12 +1,14 @@
-export type RxType = "OTC" | "Prescription Only";
+export type ProductCategory = "Neurology" | "Mental Health" | "Cardiology" | "Metabolic";
+export type ProductType = "Prescription" | "OTC";
 
 export interface Product {
   slug: string;
   name: string;
   ingredient: string;
   dosage: string;
-  category: string;
-  rxType: RxType;
+  category: ProductCategory;
+  type: ProductType;
+  description: string;
   image?: string;
 }
 

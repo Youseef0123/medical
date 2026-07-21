@@ -1,9 +1,10 @@
-import type { HTMLAttributes } from "react";
+import type { HTMLAttributes, Ref } from "react";
 import { cn } from "@/lib/cn";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   /** Adds a hover lift + shadow transition, used by interactive product cards. */
   hoverLift?: boolean;
+  ref?: Ref<HTMLDivElement>;
 }
 
 /**
@@ -12,9 +13,10 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
  * certification badges, and image frames — corner marks are implemented
  * once here rather than repeated inline across sections.
  */
-export function Card({ className, hoverLift, children, ...props }: CardProps) {
+export function Card({ className, hoverLift, children, ref, ...props }: CardProps) {
   return (
     <div
+      ref={ref}
       className={cn(
         "blueprint",
         hoverLift &&
