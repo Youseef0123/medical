@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { navLinks } from "@/data/navigation";
 import { useScrollPosition } from "@/lib/hooks/useScrollPosition";
-import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 
 export function Header() {
@@ -21,20 +22,25 @@ export function Header() {
         className={cn(
           "mx-auto flex items-center gap-4 transition-all duration-700 ease-out",
           scrolled
-            ? "max-w-7xl rounded-full bg-nav-bg px-8 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.15)]"
-            : "max-w-full rounded-none bg-transparent px-4 py-6 shadow-none",
-          mobileOpen && "!rounded-none !bg-transparent !shadow-none"
+            ? "max-w-7xl rounded-full bg-nav-bg/90 backdrop-blur-lg px-8 py-3 border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.25)]"
+            : "max-w-full rounded-none bg-black/25 backdrop-blur-md px-6 py-4 border-b border-white/5 shadow-none",
+          mobileOpen && "!rounded-none !bg-transparent !border-none !shadow-none"
         )}
       >
-        <span
-          className={cn(
-            "mr-auto flex items-baseline gap-0.5 font-heading text-2xl font-semibold transition-all duration-700 ease-out",
-            scrolled && "brightness-0 invert"
-          )}
+        <a
+          href="#home"
+          className="mr-auto flex items-center transition-all duration-700 ease-out"
         >
-          <span className="text-accent-700">m</span>
-          <span className="tracking-tight text-ink">edisave</span>
-        </span>
+          {/* Official Logo styled in White for high contrast */}
+          <Image
+            src="/images/logo.svg"
+            alt="Medisave"
+            width={120}
+            height={35}
+            className="h-8 w-auto object-contain brightness-0 invert transition-transform duration-500 hover:scale-105"
+            priority
+          />
+        </a>
 
         <div className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
@@ -42,23 +48,27 @@ export function Header() {
               key={link.href}
               href={link.href}
               className={cn(
-                "text-sm font-semibold tracking-wide transition-all duration-700 ease-out",
-                scrolled ? "text-white" : "text-accent-700"
+                "relative py-1 text-sm font-semibold tracking-wide transition-all duration-300",
+                "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-white after:transition-all after:duration-300 hover:after:w-full",
+                "!text-white hover:!text-white/80"
               )}
             >
               {link.label}
             </a>
           ))}
-          <Button
-            variant="primary"
+          <Link
             href="#contact"
             className={cn(
-              "!transition-all !duration-700 !ease-out",
-              scrolled && "!border-white !bg-white !text-accent-700"
+              "relative overflow-hidden group inline-flex items-center justify-center font-heading font-semibold text-xs tracking-wider text-white uppercase rounded-full border border-white/30 px-6 py-2.5 transition-all duration-300 shadow-md",
+              "hover:border-transparent hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(76,175,147,0.4)]"
             )}
           >
-            Get in Touch
-          </Button>
+            {/* Sliding Background Gradient */}
+            <span className="absolute inset-0 bg-gradient-to-r from-[#2E86C1] to-[#4CAF93] scale-x-0 origin-left transition-transform duration-500 ease-out group-hover:scale-x-100" />
+            
+            {/* Text label */}
+            <span className="relative z-10">Contact Us</span>
+          </Link>
         </div>
 
         <button
@@ -67,8 +77,8 @@ export function Header() {
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((open) => !open)}
           className={cn(
-            "flex h-10 w-10 items-center justify-center border bg-transparent transition-all duration-700 ease-out md:hidden",
-            scrolled && !mobileOpen ? "border-white text-white" : "border-divider text-ink"
+            "relative z-50 flex h-10 w-10 items-center justify-center border bg-transparent transition-all duration-700 ease-out md:hidden",
+            mobileOpen ? "border-white/20 text-white bg-white/5" : "border-white/25 text-white hover:border-white"
           )}
         >
           <svg
@@ -93,25 +103,31 @@ export function Header() {
       </nav>
 
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-16 bottom-0 z-40 flex flex-col gap-5 border-t border-divider bg-bg p-6 animate-[ms-fadeUp_0.25s_ease] md:hidden">
+        <div className="fixed inset-0 z-40 flex flex-col gap-6 bg-zinc-950/95 backdrop-blur-xl p-8 pt-28 md:hidden animate-[ms-fadeUp_0.25s_ease]">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="text-lg font-semibold text-ink"
+              className="text-2xl font-heading font-semibold !text-white/90 hover:!text-white border-b border-white/10 pb-3 transition-colors"
             >
               {link.label}
             </a>
           ))}
-          <Button
-            variant="primary"
-            block
+          <Link
             href="#contact"
             onClick={() => setMobileOpen(false)}
+            className={cn(
+              "relative overflow-hidden group flex items-center justify-center font-heading font-semibold text-sm tracking-wider text-white uppercase rounded-full border border-white/20 py-3 mt-4 transition-all duration-300 w-full shadow-md",
+              "hover:border-transparent active:scale-95 bg-white/5 hover:bg-transparent hover:shadow-[0_0_20px_rgba(76,175,147,0.4)]"
+            )}
           >
-            Get in Touch
-          </Button>
+            {/* Sliding Background Gradient */}
+            <span className="absolute inset-0 bg-gradient-to-r from-[#2E86C1] to-[#4CAF93] scale-x-0 origin-left transition-transform duration-500 ease-out group-hover:scale-x-100" />
+            
+            {/* Text label */}
+            <span className="relative z-10">Contact Us</span>
+          </Link>
         </div>
       )}
     </header>

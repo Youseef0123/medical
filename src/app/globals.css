@@ -252,3 +252,151 @@ img {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Medisave Modern Hero Animations ────────────────────────────────── */
+
+@keyframes ms-kenBurns {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes ms-scrollBounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+@keyframes ms-pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(76, 175, 147, 0.4); /* Teal #4CAF93 */
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(76, 175, 147, 0);
+  }
+}
+
+/* Full-bleed active backgrounds */
+.hero-bg-container {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity 1000ms cubic-bezier(0.4, 0, 0.2, 1), transform 1000ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.hero-bg-container.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+/* Active background Ken Burns zoom */
+.hero-bg-container.active .hero-bg-image {
+  animation: ms-kenBurns var(--autoplay-duration, 8000ms) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Staggered content transitions */
+.hero-text-animate {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.active .hero-text-animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Delays for staggered entries */
+.active .hero-text-kicker {
+  transition-delay: 100ms;
+}
+.active .hero-text-title {
+  transition-delay: 200ms;
+}
+.active .hero-text-description {
+  transition-delay: 300ms;
+}
+.active .hero-text-buttons {
+  transition-delay: 400ms;
+}
+
+/* Pulse animation for primary CTA */
+.hero-pulse-btn {
+  animation: ms-pulseGlow 2.5s infinite ease-in-out;
+}
+
+/* Bounce for scroll chevron */
+.hero-scroll-btn {
+  animation: ms-scrollBounce 2s infinite ease-in-out;
+}
+
+/* Progress bar dot indicators */
+.hero-indicator-dot {
+  position: relative;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color 300ms ease;
+}
+
+.hero-indicator-dot.active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hero-indicator-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: #4CAF93; /* Brand teal */
+}
+
+.hero-indicator-dot.active .hero-indicator-progress {
+  width: 100%;
+  transition: width var(--autoplay-duration, 5000ms) linear;
+}
+
+/* Respect prefers-reduced-motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg-container {
+    transition: opacity 600ms ease !important;
+    transform: none !important;
+  }
+  .hero-bg-container.active {
+    transform: none !important;
+  }
+  .hero-bg-container.active .hero-bg-image {
+    animation: none !important;
+    transform: none !important;
+  }
+  .hero-text-animate {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    transition-delay: 0ms !important;
+  }
+  .hero-pulse-btn {
+    animation: none !important;
+  }
+  .hero-scroll-btn {
+    animation: none !important;
+  }
+  .hero-indicator-dot.active .hero-indicator-progress {
+    width: 100% !important;
+    transition: none !important;
+  }
+}
+

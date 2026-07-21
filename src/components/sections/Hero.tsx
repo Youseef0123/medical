@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { heroSlides } from "@/data/hero";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { useInterval } from "@/lib/hooks/useInterval";
 import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/cn";
@@ -13,98 +13,146 @@ interface HeroProps {
   autoplayMs?: number;
 }
 
+const slideImages = [
+  "/images/hero/brand.png",
+  "/images/hero/neurology.png",
+  "/images/hero/mental.png",
+  "/images/hero/legacy.png",
+];
+
 export function Hero({ autoplayMs = 5000 }: HeroProps) {
   const [index, setIndex] = useState(0);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   const next = () => setIndex((i) => (i + 1) % heroSlides.length);
-  const prev = () => setIndex((i) => (i - 1 + heroSlides.length) % heroSlides.length);
 
+  // Auto-advance slides unless reduced motion is preferred
   useInterval(next, prefersReducedMotion ? null : autoplayMs);
 
   return (
     <section
       id="home"
-      className="relative overflow-hidden bg-accent-100 px-5 pt-32 pb-24 sm:px-8"
+      className="relative w-full h-screen overflow-hidden bg-zinc-950"
     >
-      <div className="mx-auto grid max-w-[1200px] items-center gap-12 lg:grid-cols-[1.3fr_1fr]">
-        <div className="relative min-h-[480px] pb-16 sm:min-h-[380px]">
+      {/* Background Images with Crossfade & Parallax Transition */}
+      <div className="absolute inset-0 z-0">
+        {heroSlides.map((slide, i) => {
+          const isActive = i === index;
+          return (
+            <div
+              key={slide.title}
+              className={cn("hero-bg-container", isActive && "active")}
+              style={{
+                "--autoplay-duration": "8000ms", // Ken Burns effect zoom duration
+              } as React.CSSProperties}
+            >
+              <Image
+                src={slideImages[i]}
+                alt={slide.title}
+                fill
+                priority={i === 0}
+                loading={i === 0 ? "eager" : "lazy"}
+                className="hero-bg-image object-cover"
+                sizes="100vw"
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Modern Gradient Overlay: Left-to-Right for Desktop, Bottom-to-Top/Fade on Mobile */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20 md:from-black/75 md:via-black/40 md:to-transparent z-10 pointer-events-none" />
+
+      {/* Content Slides with Staggered Text Entrance */}
+      <div className="relative z-20 w-full h-full mx-auto max-w-7xl px-6 sm:px-12 md:px-20 lg:px-32 flex items-center">
+        <div className="relative w-full min-h-[400px] flex items-center">
           {heroSlides.map((slide, i) => {
-            const active = i === index;
+            const isActive = i === index;
             return (
               <div
                 key={slide.title}
-                aria-hidden={!active}
+                aria-hidden={!isActive}
                 className={cn(
-                  "inset-x-0 top-0 w-full transition-[opacity,transform] duration-[600ms] ease-out",
-                  active
-                    ? "relative opacity-100 scale-100 translate-y-0 pointer-events-auto"
-                    : "absolute opacity-0 scale-[0.97] translate-y-2 pointer-events-none"
+                  "absolute inset-x-0 top-1/2 -translate-y-1/2 w-full transition-all duration-500",
+                  isActive ? "opacity-100 pointer-events-auto active" : "opacity-0 pointer-events-none"
                 )}
               >
-                <span className="mb-3 block text-[13px] font-semibold tracking-[0.08em] text-accent-700 uppercase">
-                  {slide.kicker}
-                </span>
-                <h1 className="mb-5 max-w-[14ch] text-[34px] leading-[1.05] font-semibold tracking-tight text-ink uppercase sm:text-[52px]">
-                  {slide.title}
-                </h1>
-                <p className="mb-7 max-w-[52ch] text-[17px] leading-relaxed text-ink/80">
-                  {slide.description}
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <Button variant="primary" href="#products">
-                    {slide.cta}
-                  </Button>
-                  <Button variant="ghost" href="#about">
-                    Learn more
-                  </Button>
+                <div className="max-w-[620px] text-left">
+                  <span className="hero-text-animate hero-text-kicker mb-3 block text-[13px] font-semibold tracking-[0.18em] text-accent-300 uppercase [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">
+                    {slide.kicker}
+                  </span>
+                  <h1 className="hero-text-animate hero-text-title mb-5 text-[36px] sm:text-[54px] lg:text-[64px] font-heading font-semibold leading-[1.05] tracking-tight text-white uppercase [text-shadow:0_2px_10px_rgba(0,0,0,0.55)]">
+                    {slide.title}
+                  </h1>
+                  <p className="hero-text-animate hero-text-description mb-8 text-[16px] sm:text-[18px] leading-relaxed text-white/80 max-w-[50ch] [text-shadow:0_1px_5px_rgba(0,0,0,0.4)]">
+                    {slide.description}
+                  </p>
+                  <div className="hero-text-animate hero-text-buttons flex flex-wrap gap-4">
+                    <Button
+                      variant="primary"
+                      href="#products"
+                      className="hero-pulse-btn hover:scale-105 active:scale-95 shadow-md hover:shadow-lg transition-transform duration-200"
+                    >
+                      {slide.cta}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      href="#about"
+                      className="!border-white/40 !text-white hover:!bg-white/10 hover:!border-white active:scale-95 transition-all duration-200"
+                    >
+                      Learn more
+                    </Button>
+                  </div>
                 </div>
               </div>
             );
           })}
-
-          <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2.5">
-            <button
-              type="button"
-              onClick={prev}
-              aria-label="Previous slide"
-              className="flex h-8 w-8 items-center justify-center border border-divider text-ink"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            {heroSlides.map((slide, i) => (
-              <button
-                key={slide.title}
-                type="button"
-                onClick={() => setIndex(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                className={cn(
-                  "h-2 border border-accent-700 p-0 transition-all duration-300",
-                  i === index ? "w-[22px] bg-accent-700" : "w-2 bg-transparent"
-                )}
-              />
-            ))}
-            <button
-              type="button"
-              onClick={next}
-              aria-label="Next slide"
-              className="flex h-8 w-8 items-center justify-center border border-divider text-ink"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </button>
-          </div>
         </div>
+      </div>
 
-        <Card className="hidden aspect-square items-center justify-center text-accent-700 lg:flex">
-          <svg width="46%" height="46%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-            <path d="M10.5 20.5l-6-6a4.5 4.5 0 0 1 6-6.7l.5.4.5-.4a4.5 4.5 0 0 1 6 6.7l-6 6a1 1 0 0 1-1 0z" />
-            <path d="M2 12h3l1.5-3 2 6 1.5-4h3" />
+      {/* Animated Indicator Dots with Dynamic Progress Bars */}
+      <div className="absolute inset-x-0 bottom-14 z-30 flex items-center justify-center gap-3 px-6">
+        {heroSlides.map((slide, i) => {
+          const isActive = i === index;
+          return (
+            <button
+              key={slide.title}
+              type="button"
+              onClick={() => setIndex(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={cn(
+                "hero-indicator-dot h-[3px] w-12 sm:w-16 rounded-full",
+                isActive && "active"
+              )}
+              style={{
+                "--autoplay-duration": prefersReducedMotion ? "0ms" : `${autoplayMs}ms`,
+              } as React.CSSProperties}
+            >
+              <span className="hero-indicator-progress rounded-full" />
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Animated Scroll Down Chevron */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30">
+        <a
+          href="#about"
+          aria-label="Scroll down"
+          className="hero-scroll-btn flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/10 text-white/80 hover:border-white/50 hover:text-white transition-colors duration-300"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            className="mt-0.5"
+          >
+            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-        </Card>
+        </a>
       </div>
     </section>
   );
