@@ -2,7 +2,6 @@
 
 import { useState, useLayoutEffect, useRef } from "react";
 import { MapPin, Mail, Phone, CheckCircle } from "lucide-react";
-import { CtaButton } from "@/components/ui/CtaButton";
 import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/cn";
 import { gsap } from "@/lib/gsap";
@@ -56,7 +55,7 @@ export function Contact() {
               GET IN TOUCH
             </span>
             <h2 className="text-[32px] sm:text-[38px] font-semibold tracking-tight text-ink uppercase leading-tight">
-              Let's build a healthier future together
+              Let&apos;s build a healthier future together
             </h2>
             <p className="mt-4 text-base leading-relaxed text-ink/75 max-w-[48ch]">
               Whether you are a healthcare provider seeking specific product details, a potential partner looking for R&D collaborations, or have general questions, our team is ready to assist.
@@ -149,7 +148,7 @@ export function Contact() {
                       placeholder="e.g., John Doe"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full rounded-none border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus-visible:border-accent-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-700"
+                      className="w-full rounded-none border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus:border-accent-700 focus:outline-none transition-colors duration-200"
                     />
                   </div>
 
@@ -165,7 +164,7 @@ export function Contact() {
                       placeholder="e.g., john@example.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full rounded-none border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus-visible:border-accent-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-700"
+                      className="w-full rounded-none border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus:border-accent-700 focus:outline-none transition-colors duration-200"
                     />
                   </div>
                 </div>
@@ -181,7 +180,7 @@ export function Contact() {
                       required
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="w-full appearance-none rounded-none border border-divider bg-white px-4 py-3 pr-10 text-sm font-medium text-ink focus-visible:border-accent-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-700"
+                      className="w-full appearance-none rounded-none border border-divider bg-white px-4 py-3 pr-10 text-sm font-medium text-ink focus:border-accent-700 focus:outline-none transition-colors duration-200"
                     >
                       <option value="" disabled>Select inquiry type</option>
                       <option value="general">General Inquiry</option>
@@ -210,7 +209,7 @@ export function Contact() {
                     placeholder="Provide details about your query..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full rounded-none border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus-visible:border-accent-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-700 resize-y"
+                    className="w-full rounded-none border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus:border-accent-700 focus:outline-none transition-colors duration-200 resize-y"
                   />
                 </div>
 
