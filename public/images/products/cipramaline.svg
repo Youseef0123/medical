@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%" style="background-color: #f4f5f6;">
+  <defs>
+    <!-- Soft shadow filter -->
+    <filter id="shadow-blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" />
+    </filter>
+    
+    <!-- Linear gradient for logo -->
+    <linearGradient id="brand-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2E86C1" />
+      <stop offset="100%" stop-color="#4CAF93" />
+    </linearGradient>
+  </defs>
+
+  <!-- Ambient background grid pattern (very faint blueprint grid) -->
+  <g opacity="0.03" stroke="#2c455d" stroke-width="1">
+    <path d="M 0,100 L 800,100 M 0,200 L 800,200 M 0,300 L 800,300 M 0,400 L 800,400 M 0,500 L 800,500 M 0,600 L 800,600 M 0,700 L 800,700" />
+    <path d="M 100,0 L 100,800 M 200,0 L 200,800 M 300,0 L 300,800 M 400,0 L 400,800 M 500,0 L 500,800 M 600,0 L 600,800 M 700,0 L 700,800" />
+  </g>
+
+  <!-- Studio Floor Soft Drop Shadow -->
+  <ellipse cx="330" cy="670" rx="310" ry="32" fill="#122538" opacity="0.16" filter="url(#shadow-blur)" />
+
+  <!-- 3D CUBEMAP PROJECTED SURFACES -->
+
+  <!-- 1. TOP FACE (Lightest Highlight) -->
+  <polygon points="50,250 250,310 650,220 450,160" fill="#fdfdfd" stroke="#e1e4e6" stroke-width="0.75" />
+  
+  <!-- Top Face Regulatory Details (Blueprint markings) -->
+  <g transform="translate(50, 250) skewY(-12.68)" opacity="0.4">
+    <!-- Faint lines simulating print details -->
+    <line x1="60" y1="12" x2="180" y2="12" stroke="#8c9ba5" stroke-width="1" stroke-dasharray="3,3" />
+    <line x1="60" y1="20" x2="220" y2="20" stroke="#8c9ba5" stroke-width="1" stroke-dasharray="3,3" />
+    <circle cx="240" cy="16" r="3" fill="#8c9ba5" />
+  </g>
+
+  <!-- 2. LEFT SIDE FACE (Shaded Neutral) -->
+  <polygon points="50,250 250,310 250,680 50,600" fill="#eaecef" stroke="#d6dadc" stroke-width="0.75" />
+  <!-- Side face colored bottom segment -->
+  <polygon points="50,477 250,550 250,680 50,600" fill="#1b5e20" stroke="#1b5e20" stroke-width="0.5" />
+  
+  <!-- Side text: Rotated vertically to match 3D side -->
+  <g transform="translate(50, 250) skewY(16.7)">
+    <g transform="translate(130, 210) rotate(-90)">
+      <text x="0" y="0" font-family="Inter, sans-serif" font-weight="700" font-size="17" fill="#3a4a58" letter-spacing="1">CIPRAMALINE</text>
+      <text x="140" y="0" font-family="Inter, sans-serif" font-weight="600" font-size="13" fill="#2e7d32">10 MG</text>
+    </g>
+  </g>
+
+  <!-- 3. FRONT MAIN FACE -->
+  <!-- Base white container -->
+  <polygon points="250,310 650,220 650,580 250,680" fill="#ffffff" stroke="#d6dadc" stroke-width="0.75" />
+  <!-- Solid accent color bottom band (35%) -->
+  <polygon points="250,530 650,480 650,580 250,680" fill="#2e7d32" stroke="#2e7d32" stroke-width="0.5" />
+
+  <!-- Front face graphics sheared into 3D plane using skewY -->
+  <g transform="translate(250, 310) skewY(-12.68)">
+    
+    <!-- Top-Right Brand Logo -->
+    <g transform="translate(280, 22)">
+      <!-- Gradient Icon "m" -->
+      <path d="M 0,18 C 0,12 3,10 5,10 C 7,10 9,12 9,15 L 9,22 L 13,22 L 13,15 C 13,12 16,10 18,10 C 20,10 22,12 22,15 L 22,22 L 26,22 L 26,14 C 26,9 22,6 18,6 C 15.5,6 13.5,8 11.5,10 C 10,8 8,6 5.5,6 C 2.5,6 0,8.5 0,12 Z" fill="url(#brand-grad)" />
+      <!-- Logo Wordmark -->
+      <text x="32" y="19" font-family="Inter, sans-serif" font-weight="800" font-size="12" fill="#2c455d" letter-spacing="0.5">medisave</text>
+      <text x="32" y="27" font-family="Inter, sans-serif" font-weight="600" font-size="5.5" fill="#8c9ba5" letter-spacing="1">DEVELOPED</text>
+    </g>
+
+    <!-- Product Typography -->
+    <g transform="translate(30, 75)">
+      <!-- Name & Dosage -->
+      <text x="0" y="0" font-family="Inter, sans-serif" font-weight="900" font-size="34" fill="#2c455d" letter-spacing="-0.5">Cipramaline</text>
+      <text x="180" y="0" font-family="Inter, sans-serif" font-weight="700" font-size="18" fill="#2e7d32" dx="10">10 mg</text>
+      
+      <!-- Ingredient line -->
+      <text x="0" y="32" font-family="Inter, sans-serif" font-weight="600" font-size="13" fill="#5980a6" letter-spacing="0.25">Escitalopram</text>
+      <line x1="0" y1="45" x2="340" y2="45" stroke="#eaecef" stroke-width="1.5" />
+      
+      <!-- Dosage form & counts -->
+      <text x="0" y="68" font-family="Inter, sans-serif" font-weight="500" font-size="11.5" fill="#8c9ba5" letter-spacing="0.5">28 FILM COATED TABLETS</text>
+    </g>
+
+    <!-- Lower Section (:m Logo bottom-left) -->
+    <text x="30" y="325" font-family="Inter, sans-serif" font-weight="900" font-size="46" fill="#ffffff" letter-spacing="-1.5" opacity="0.95">:m</text>
+
+    <!-- Molecule node-link icon straddling the white/colored border -->
+    <!-- Positioned centered horizontally at x=310, vertically at y=220 (which maps to 220 flat, on the split boundary) -->
+    <g transform="translate(310, 220)">
+      <!-- Circle Background -->
+      <circle cx="0" cy="0" r="28" fill="#4caf50" stroke="#ffffff" stroke-width="3.5" />
+      
+      <!-- Molecule Web Network -->
+      <g stroke="#ffffff" stroke-width="1.5" opacity="0.9">
+        <line x1="-12" y1="-8" x2="2" y2="-12" />
+        <line x1="2" y1="-12" x2="12" y2="-2" />
+        <line x1="12" y1="-2" x2="6" y2="12" />
+        <line x1="6" y1="12" x2="-8" y2="10" />
+        <line x1="-8" y1="10" x2="-12" y2="-8" />
+        <line x1="2" y1="-12" x2="6" y2="12" />
+      </g>
+      
+      <!-- Nodes (dots) -->
+      <circle cx="-12" cy="-8" r="3.5" fill="#ffffff" />
+      <circle cx="2" cy="-12" r="3.5" fill="#ffffff" />
+      <circle cx="12" cy="-2" r="3.5" fill="#ffffff" />
+      <circle cx="6" cy="12" r="3.5" fill="#ffffff" />
+      <circle cx="-8" cy="10" r="3.5" fill="#ffffff" />
+    </g>
+    
+  </g>
+</svg>

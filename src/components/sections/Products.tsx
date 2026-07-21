@@ -183,9 +183,11 @@ function ProductCard({
   const packagingImage = (
     <div className="overflow-hidden">
       <ImageSlot
+        src={`/images/products/${product.slug}.svg`}
         alt={`${product.name} packaging photo`}
         placeholderLabel={`${product.name} packaging photo`}
         className="aspect-4/3"
+        disableDuotone
       />
     </div>
   );

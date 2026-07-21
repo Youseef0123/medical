@@ -9,6 +9,7 @@ interface ImageSlotProps {
   className?: string;
   priority?: boolean;
   sizes?: string;
+  disableDuotone?: boolean;
 }
 
 /**
@@ -24,9 +25,10 @@ export function ImageSlot({
   className,
   priority = false,
   sizes = "(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw",
+  disableDuotone = false,
 }: ImageSlotProps) {
   return (
-    <div className={cn("relative overflow-hidden", src && "duotone", className)}>
+    <div className={cn("relative overflow-hidden", (src && !disableDuotone) && "duotone", className)}>
       {src ? (
         <Image
           src={src}
