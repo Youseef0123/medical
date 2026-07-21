@@ -11,6 +11,7 @@
   --color-accent: #5980a6;
   --color-accent-2: #728fab;
   --color-divider: color-mix(in srgb, #1d1f20 16%, transparent);
+  --color-nav-bg: #1d2d3d;
 
   --color-neutral-100: #f5f5f8;
   --color-neutral-200: #e7e7ea;
@@ -68,6 +69,7 @@
   --color-surface: var(--color-surface);
   --color-ink: var(--color-text);
   --color-divider: var(--color-divider);
+  --color-nav-bg: var(--color-nav-bg);
 
   --color-accent: var(--color-accent);
   --color-accent-2: var(--color-accent-2);

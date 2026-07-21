@@ -7,18 +7,31 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 
 export function Header() {
-  const scrolled = useScrollPosition(40);
+  const scrolled = useScrollPosition(20);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow] duration-300",
-        scrolled ? "bg-bg shadow-md" : "bg-transparent"
+        "fixed inset-x-0 top-0 z-[60] transition-all duration-700 ease-out",
+        scrolled ? "pt-4 px-6" : "p-0"
       )}
     >
-      <nav className="flex items-center gap-4 px-5 py-4 sm:px-8">
-        <span className="mr-auto flex items-baseline gap-0.5 font-heading text-2xl font-semibold">
+      <nav
+        className={cn(
+          "mx-auto flex items-center gap-4 transition-all duration-700 ease-out",
+          scrolled
+            ? "max-w-7xl rounded-full bg-nav-bg px-8 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.15)]"
+            : "max-w-full rounded-none bg-transparent px-4 py-6 shadow-none",
+          mobileOpen && "!rounded-none !bg-transparent !shadow-none"
+        )}
+      >
+        <span
+          className={cn(
+            "mr-auto flex items-baseline gap-0.5 font-heading text-2xl font-semibold transition-all duration-700 ease-out",
+            scrolled && "brightness-0 invert"
+          )}
+        >
           <span className="text-accent-700">m</span>
           <span className="tracking-tight text-ink">edisave</span>
         </span>
@@ -28,12 +41,22 @@ export function Header() {
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-semibold tracking-wide text-ink hover:text-accent-700"
+              className={cn(
+                "text-sm font-semibold tracking-wide transition-all duration-700 ease-out",
+                scrolled ? "text-white" : "text-accent-700"
+              )}
             >
               {link.label}
             </a>
           ))}
-          <Button variant="primary" href="#contact">
+          <Button
+            variant="primary"
+            href="#contact"
+            className={cn(
+              "!transition-all !duration-700 !ease-out",
+              scrolled && "!border-white !bg-white !text-accent-700"
+            )}
+          >
             Get in Touch
           </Button>
         </div>
@@ -43,7 +66,10 @@ export function Header() {
           aria-label="Menu"
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((open) => !open)}
-          className="flex h-10 w-10 items-center justify-center border border-divider bg-transparent md:hidden"
+          className={cn(
+            "flex h-10 w-10 items-center justify-center border bg-transparent transition-all duration-700 ease-out md:hidden",
+            scrolled && !mobileOpen ? "border-white text-white" : "border-divider text-ink"
+          )}
         >
           <svg
             width="20"
