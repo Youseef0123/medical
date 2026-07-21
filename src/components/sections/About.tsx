@@ -180,7 +180,7 @@ export function About() {
                 <i className="corner bl" aria-hidden />
                 <i className="corner br" aria-hidden />
 
-                <div className="duotone absolute inset-0 overflow-hidden">
+                <div className="duotone h-full w-full overflow-hidden">
                   {SCROLL_IMAGES.map((image, i) => (
                     <div
                       key={image.src}
