@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { CtaButton } from "@/components/ui/CtaButton";
 import { navLinks } from "@/data/navigation";
 import { useScrollPosition } from "@/lib/hooks/useScrollPosition";
 import { cn } from "@/lib/cn";
@@ -15,15 +15,15 @@ export function Header() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-[60] transition-all duration-700 ease-out",
-        scrolled ? "pt-4 px-6" : "p-0"
+        scrolled ? "pt-4 px-6 md:px-12" : "p-0"
       )}
     >
       <nav
         className={cn(
           "mx-auto flex items-center gap-4 transition-all duration-700 ease-out",
           scrolled
-            ? "max-w-7xl rounded-full bg-nav-bg/90 backdrop-blur-lg px-8 py-3 border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.25)]"
-            : "max-w-full rounded-none bg-black/25 backdrop-blur-md px-6 py-4 border-b border-white/5 shadow-none",
+            ? "max-w-7xl rounded-full bg-nav-bg/90 backdrop-blur-lg px-6 md:px-12 py-3 border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.25)]"
+            : "max-w-full rounded-none bg-black/25 backdrop-blur-md px-6 md:px-16 py-4 border-b border-white/5 shadow-none",
           mobileOpen && "!rounded-none !bg-transparent !border-none !shadow-none"
         )}
       >
@@ -56,19 +56,12 @@ export function Header() {
               {link.label}
             </a>
           ))}
-          <Link
+          <CtaButton
             href="#contact"
-            className={cn(
-              "relative overflow-hidden group inline-flex items-center justify-center font-heading font-semibold text-xs tracking-wider text-white uppercase rounded-full border border-white/30 px-6 py-2.5 transition-all duration-300 shadow-md",
-              "hover:border-transparent hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(76,175,147,0.4)]"
-            )}
+            variant="primary"
           >
-            {/* Sliding Background Gradient */}
-            <span className="absolute inset-0 bg-gradient-to-r from-[#2E86C1] to-[#4CAF93] scale-x-0 origin-left transition-transform duration-500 ease-out group-hover:scale-x-100" />
-            
-            {/* Text label */}
-            <span className="relative z-10">Contact Us</span>
-          </Link>
+            Contact Us
+          </CtaButton>
         </div>
 
         <button
@@ -114,20 +107,14 @@ export function Header() {
               {link.label}
             </a>
           ))}
-          <Link
+          <CtaButton
             href="#contact"
+            variant="primary"
+            className="w-full mt-4"
             onClick={() => setMobileOpen(false)}
-            className={cn(
-              "relative overflow-hidden group flex items-center justify-center font-heading font-semibold text-sm tracking-wider text-white uppercase rounded-full border border-white/20 py-3 mt-4 transition-all duration-300 w-full shadow-md",
-              "hover:border-transparent active:scale-95 bg-white/5 hover:bg-transparent hover:shadow-[0_0_20px_rgba(76,175,147,0.4)]"
-            )}
           >
-            {/* Sliding Background Gradient */}
-            <span className="absolute inset-0 bg-gradient-to-r from-[#2E86C1] to-[#4CAF93] scale-x-0 origin-left transition-transform duration-500 ease-out group-hover:scale-x-100" />
-            
-            {/* Text label */}
-            <span className="relative z-10">Contact Us</span>
-          </Link>
+            Contact Us
+          </CtaButton>
         </div>
       )}
     </header>

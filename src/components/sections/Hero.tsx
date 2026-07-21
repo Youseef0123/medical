@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { heroSlides } from "@/data/hero";
-import { Button } from "@/components/ui/Button";
+import { CtaButton } from "@/components/ui/CtaButton";
 import { useInterval } from "@/lib/hooks/useInterval";
 import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/cn";
@@ -88,20 +88,19 @@ export function Hero({ autoplayMs = 5000 }: HeroProps) {
                     {slide.description}
                   </p>
                   <div className="hero-text-animate hero-text-buttons flex flex-wrap gap-4">
-                    <Button
+                    <CtaButton
                       variant="primary"
                       href="#products"
-                      className="hero-pulse-btn hover:scale-105 active:scale-95 shadow-md hover:shadow-lg transition-transform duration-200"
                     >
                       {slide.cta}
-                    </Button>
-                    <Button
-                      variant="ghost"
+                    </CtaButton>
+                    <CtaButton
+                      variant="secondary"
                       href="#about"
-                      className="!border-white/40 !text-white hover:!bg-white/10 hover:!border-white active:scale-95 transition-all duration-200"
+                      className="!text-white/80 hover:!text-white !border-white/20 hover:!border-white/50"
                     >
                       Learn more
-                    </Button>
+                    </CtaButton>
                   </div>
                 </div>
               </div>
