@@ -24,14 +24,22 @@ const socialLinks = [
   },
 ];
 
+const legalLinks = [
+  { label: "Privacy Policy", href: "#" },
+  { label: "Terms of Service", href: "#" },
+];
+
 export function Footer() {
   return (
-    <footer className="bg-neutral-900 px-5 pt-16 pb-6 text-[#e8eaec] sm:px-8">
+    <footer className="blueprint relative !border-x-0 !border-b-0 !border-white/12 bg-neutral-900 px-5 pt-16 pb-6 text-[#e8eaec] sm:px-8">
+      <i className="corner tl !text-white/40" aria-hidden />
+      <i className="corner tr !text-white/40" aria-hidden />
+
       <div className="mx-auto max-w-[1200px]">
-        <div className="grid grid-cols-1 gap-10 pb-10 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
+        <div className="grid grid-cols-1 gap-10 pb-10 sm:grid-cols-2 md:divide-x md:divide-white/12 lg:grid-cols-4">
+          <div className="md:pr-10">
             <span className="mb-2 flex items-baseline gap-0.5 font-heading text-[22px] font-semibold">
-              <span className="text-accent-300">m</span>
+              <span className="text-accent">m</span>
               <span className="text-white">edisave</span>
             </span>
             <span className="mb-4 block text-[10px] tracking-[0.14em] text-white/55 uppercase">
@@ -44,44 +52,30 @@ export function Footer() {
             </p>
           </div>
 
-          <div>
-            <h4 className="mb-4 text-[13px] tracking-[0.08em] text-white uppercase">
-              Quick Links
-            </h4>
+          <div className="md:px-10">
+            <h6 className="mb-5">Quick Links</h6>
             <div className="flex flex-col gap-2.5">
               {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm text-white/75 hover:text-white"
-                >
+                <a key={link.href} href={link.href} className="footer-link text-sm">
                   {link.label}
                 </a>
               ))}
             </div>
           </div>
 
-          <div>
-            <h4 className="mb-4 text-[13px] tracking-[0.08em] text-white uppercase">
-              Products
-            </h4>
+          <div className="md:px-10">
+            <h6 className="mb-5">Products</h6>
             <div className="flex flex-col gap-2.5">
               {products.slice(0, 4).map((product) => (
-                <a
-                  key={product.slug}
-                  href="#products"
-                  className="text-sm text-white/75 hover:text-white"
-                >
+                <a key={product.slug} href="#products" className="footer-link text-sm">
                   {product.name}
                 </a>
               ))}
             </div>
           </div>
 
-          <div>
-            <h4 className="mb-4 text-[13px] tracking-[0.08em] text-white uppercase">
-              Contact
-            </h4>
+          <div className="md:pl-10">
+            <h6 className="mb-5">Contact</h6>
             <p className="mb-4 text-sm leading-loose text-white/75">
               142 Harbourview Industrial Park
               <br />
@@ -97,16 +91,21 @@ export function Footer() {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
-                  className="text-white"
+                  className="group relative flex h-9 w-9 items-center justify-center border border-white/15 text-white/70 transition-colors duration-300 hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 >
+                  <span className="pointer-events-none absolute -left-px -top-px h-2 w-2 border-l border-t border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
+                  <span className="pointer-events-none absolute -right-px -top-px h-2 w-2 border-r border-t border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
+                  <span className="pointer-events-none absolute -bottom-px -left-px h-2 w-2 border-b border-l border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
+                  <span className="pointer-events-none absolute -bottom-px -right-px h-2 w-2 border-b border-r border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
+
                   {social.label === "Instagram" ? (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                       <rect x="2" y="2" width="20" height="20" rx="0" />
                       <circle cx="12" cy="12" r="4" />
                       <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
                     </svg>
                   ) : social.label === "LinkedIn" ? (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                       <rect x="2" y="2" width="20" height="20" rx="0" />
                       <line x1="7" y1="10" x2="7" y2="17" />
                       <line x1="7" y1="7" x2="7" y2="7.2" />
@@ -114,7 +113,7 @@ export function Footer() {
                       <line x1="11" y1="10" x2="11" y2="17" />
                     </svg>
                   ) : (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
                       <path d={social.path ?? ""} />
                     </svg>
                   )}
@@ -124,10 +123,17 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-between gap-3 border-t border-white/15 pt-5">
-          <span className="text-xs text-white/55">
-            © 2026 Medisave. All rights reserved.
-          </span>
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-white/15 pt-5">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <span className="text-xs text-white/55">
+              © 2026 Medisave. All rights reserved.
+            </span>
+            {legalLinks.map((link) => (
+              <a key={link.label} href={link.href} className="footer-link text-xs">
+                {link.label}
+              </a>
+            ))}
+          </div>
           <span className="text-xs text-white/45">
             Product, statistic and testimonial data shown are illustrative
             placeholders.
