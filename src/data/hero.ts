@@ -1,5 +1,14 @@
 import type { HeroSlide } from "@/types";
 
+/** Hairline trust strip shown along the bottom of the hero — editorial
+ *  metadata cells separated by blueprint dividers. */
+export const heroTrustItems: { value: string; label: string }[] = [
+  { value: "15", label: "Years of practice" },
+  { value: "40+", label: "Products in market" },
+  { value: "GMP", label: "Certified manufacturing" },
+  { value: "100%", label: "Batch traceability" },
+];
+
 export const heroSlides: HeroSlide[] = [
   {
     kicker: "Medisave",
