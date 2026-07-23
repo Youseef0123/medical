@@ -31,13 +31,15 @@ export function Header() {
           href="#home"
           className="mr-auto flex items-center transition-all duration-700 ease-out"
         >
-          {/* Official Logo styled in White for high contrast */}
+          {/* Dark-surface variant of the official logo: identical gradient
+              "m", wordmark in white, transparent background. Generated from
+              the original logo.svg artwork. */}
           <Image
-            src="/images/logo.svg"
+            src="/images/logo-dark.png"
             alt="Medisave"
-            width={120}
-            height={35}
-            className="h-8 w-auto object-contain brightness-0 invert transition-transform duration-500 hover:scale-105"
+            width={132}
+            height={36}
+            className="h-8 w-auto object-contain transition-transform duration-500 hover:scale-105"
             priority
           />
         </a>
@@ -49,7 +51,7 @@ export function Header() {
               href={link.href}
               className={cn(
                 "relative py-1 text-sm font-semibold tracking-wide transition-all duration-300",
-                "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-white after:transition-all after:duration-300 hover:after:w-full",
+                "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:rounded-full after:[background-image:var(--brand-gradient)] after:transition-all after:duration-300 hover:after:w-full",
                 "!text-white hover:!text-white/80"
               )}
             >
@@ -70,7 +72,7 @@ export function Header() {
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((open) => !open)}
           className={cn(
-            "relative z-50 flex h-10 w-10 items-center justify-center border bg-transparent transition-all duration-700 ease-out md:hidden",
+            "relative z-50 flex h-10 w-10 items-center justify-center rounded-full border bg-transparent transition-all duration-700 ease-out md:hidden",
             mobileOpen ? "border-white/20 text-white bg-white/5" : "border-white/25 text-white hover:border-white"
           )}
         >

@@ -75,7 +75,7 @@ export function Testimonials() {
                 type="button"
                 onClick={prev}
                 aria-label="Previous testimonial"
-                className="group flex h-10 w-10 items-center justify-center border border-divider bg-transparent text-ink transition-colors duration-300 hover:border-accent-700 hover:text-accent-700 cursor-pointer"
+                className="group flex h-10 w-10 items-center justify-center rounded-full border border-divider bg-transparent text-ink transition-colors duration-300 hover:border-accent-700 hover:text-accent-700 cursor-pointer"
               >
                 <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
               </button>
@@ -83,7 +83,7 @@ export function Testimonials() {
                 type="button"
                 onClick={next}
                 aria-label="Next testimonial"
-                className="group flex h-10 w-10 items-center justify-center border border-divider bg-transparent text-ink transition-colors duration-300 hover:border-accent-700 hover:text-accent-700 cursor-pointer"
+                className="group flex h-10 w-10 items-center justify-center rounded-full border border-divider bg-transparent text-ink transition-colors duration-300 hover:border-accent-700 hover:text-accent-700 cursor-pointer"
               >
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>

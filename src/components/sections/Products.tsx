@@ -1,8 +1,7 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { products } from "@/data/products";
-import { Card } from "@/components/ui/Card";
 import { Tag } from "@/components/ui/Tag";
 import { ImageSlot } from "@/components/ui/ImageSlot";
 import { Button } from "@/components/ui/Button";
@@ -21,11 +20,39 @@ function filterByCategory(category: string): Product[] {
 export function Products() {
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [leavingSlugs, setLeavingSlugs] = useState<Set<string>>(new Set());
+  const sectionRef = useRef<HTMLElement>(null);
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const pendingFlipState = useRef<ReturnType<typeof Flip.getState> | null>(null);
   const enteringSlugsRef = useRef<Set<string>>(new Set());
   const prefersReducedMotion = usePrefersReducedMotion();
   const hoverCapable = useHoverCapable();
+
+  // One-shot entrance: staggered fade-up as the grid scrolls into view.
+  // clearProps wipes the inline transforms afterwards so the GSAP Flip
+  // filter animation always measures clean layout positions.
+  useLayoutEffect(() => {
+    if (prefersReducedMotion) return;
+    const els = Array.from(cardRefs.current.values());
+    if (!els.length) return;
+
+    const ctx = gsap.context(() => {
+      gsap.from(els, {
+        opacity: 0,
+        y: 26,
+        duration: 0.6,
+        ease: "power2.out",
+        stagger: 0.07,
+        clearProps: "opacity,transform",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 78%",
+          once: true,
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [prefersReducedMotion]);
 
   // Runs after a filter change has committed to the DOM: replays the
   // captured Flip state so staying/incoming cards slide into their new
@@ -109,18 +136,19 @@ export function Products() {
   const visibleProducts = filterByCategory(activeCategory);
 
   return (
-    <section id="products" className="bg-neutral-100 px-5 py-22 sm:px-8">
+    <section ref={sectionRef} id="products" className="bg-neutral-100 px-5 py-22 sm:px-8">
       <div className="mx-auto max-w-[1200px]">
         <div className="mb-9 text-center">
-          <span className="mb-3 block text-[13px] font-semibold tracking-[0.08em] text-accent-700 uppercase">
+          <span className="brand-text mb-3 block text-[13px] font-semibold tracking-[0.08em] uppercase">
             Our Products
           </span>
           <h2 className="text-[32px] font-semibold tracking-tight text-ink uppercase">
             Formulations you can rely on
           </h2>
+          <span className="brand-gradient mx-auto mt-4 block h-1 w-16 rounded-full" />
         </div>
 
-        <div className="mb-9 flex justify-center">
+        <div className="mb-10 flex justify-center">
           <div className="seg flex-wrap">
             {CATEGORIES.map((category) => (
               <button
@@ -152,7 +180,7 @@ export function Products() {
           ))}
         </div>
 
-        <div className="mt-10 text-center">
+        <div className="mt-11 text-center">
           <Button variant="secondary" onClick={() => handleFilterChange("All")}>
             View All Products
           </Button>
@@ -170,6 +198,30 @@ interface ProductCardProps {
   registerRef: (el: HTMLDivElement | null) => void;
 }
 
+/** Gradient pill for the therapeutic category — carries the brand mark. */
+function CategoryTag({ children }: { children: ReactNode }) {
+  return (
+    <span className="brand-gradient inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide text-white">
+      {children}
+    </span>
+  );
+}
+
+function ProductImage({ product }: { product: Product }) {
+  return (
+    <div className="relative overflow-hidden bg-gradient-to-br from-[#eef5fb] to-[#edf9f3]">
+      <span className="brand-gradient absolute inset-x-0 top-0 z-10 h-1" aria-hidden />
+      <ImageSlot
+        src={`/images/products/${product.slug}.svg`}
+        alt={`${product.name} packaging photo`}
+        placeholderLabel={`${product.name} packaging photo`}
+        className="aspect-4/3"
+        disableDuotone
+      />
+    </div>
+  );
+}
+
 function ProductCard({
   product,
   hoverCapable,
@@ -180,32 +232,25 @@ function ProductCard({
   const [flipped, setFlipped] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
-  const packagingImage = (
-    <div className="overflow-hidden">
-      <ImageSlot
-        src={`/images/products/${product.slug}.svg`}
-        alt={`${product.name} packaging photo`}
-        placeholderLabel={`${product.name} packaging photo`}
-        className="aspect-4/3"
-        disableDuotone
-      />
-    </div>
-  );
-
   // Reduced motion: skip the 3D flip entirely, use a plain expand/collapse
   // in normal document flow for the back-face content.
   if (prefersReducedMotion) {
     return (
-      <Card
+      <div
         ref={registerRef}
         aria-hidden={hidden}
-        className={cn("flex flex-col", hidden && "pointer-events-none")}
+        className={cn(
+          "product-card flex flex-col overflow-hidden",
+          hidden && "pointer-events-none"
+        )}
       >
-        {packagingImage}
+        <ProductImage product={product} />
         <div className="flex flex-1 flex-col p-4.5">
           <div className="mb-2.5 flex flex-wrap gap-2">
-            <Tag variant="accent">{product.category}</Tag>
-            <Tag variant="neutral">{product.type}</Tag>
+            <CategoryTag>{product.category}</CategoryTag>
+            <Tag variant="neutral" className="rounded-full">
+              {product.type}
+            </Tag>
           </div>
           <h3 className="mb-1.5 font-heading text-xl font-semibold tracking-tight text-ink uppercase">
             {product.name}
@@ -217,7 +262,7 @@ function ProductCard({
             type="button"
             onClick={() => setExpanded((e) => !e)}
             aria-expanded={expanded}
-            className="mt-3 self-start text-xs font-semibold tracking-wide text-accent-700 uppercase underline-offset-4 hover:underline"
+            className="mt-3 self-start text-xs font-semibold tracking-wide text-brand-blue uppercase underline-offset-4 hover:underline"
           >
             {expanded ? "Less info" : "More info"}
           </button>
@@ -228,17 +273,20 @@ function ProductCard({
             </p>
           )}
         </div>
-      </Card>
+      </div>
     );
   }
 
   const toggle = () => setFlipped((f) => !f);
 
   return (
-    <Card
+    <div
       ref={registerRef}
       aria-hidden={hidden}
-      className={cn("group aspect-3/4 [perspective:1000px]", hidden && "pointer-events-none")}
+      className={cn(
+        "product-card group aspect-3/4 [perspective:1000px]",
+        hidden && "pointer-events-none"
+      )}
       onClick={!hoverCapable ? toggle : undefined}
       role={!hoverCapable ? "button" : undefined}
       tabIndex={!hoverCapable ? (hidden ? -1 : 0) : undefined}
@@ -263,12 +311,14 @@ function ProductCard({
         )}
       >
         {/* Front face */}
-        <div className="absolute inset-0 flex flex-col [backface-visibility:hidden]">
-          {packagingImage}
+        <div className="absolute inset-0 flex flex-col overflow-hidden rounded-[18px] bg-white [backface-visibility:hidden]">
+          <ProductImage product={product} />
           <div className="flex flex-1 flex-col p-4.5">
             <div className="mb-2.5 flex flex-wrap gap-2">
-              <Tag variant="accent">{product.category}</Tag>
-              <Tag variant="neutral">{product.type}</Tag>
+              <CategoryTag>{product.category}</CategoryTag>
+              <Tag variant="neutral" className="rounded-full">
+                {product.type}
+              </Tag>
             </div>
             <h3 className="mb-1.5 font-heading text-xl font-semibold tracking-tight text-ink uppercase">
               {product.name}
@@ -279,10 +329,9 @@ function ProductCard({
         </div>
 
         {/* Back face */}
-        <div className="absolute inset-0 flex flex-col justify-center gap-3 p-5 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-          <Tag variant="outline" className="self-start">
-            {product.type}
-          </Tag>
+        <div className="absolute inset-0 flex flex-col justify-center gap-3 overflow-hidden rounded-[18px] bg-white p-5 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+          <span className="brand-gradient absolute inset-x-0 top-0 h-1" aria-hidden />
+          <CategoryTag>{product.category}</CategoryTag>
           <h3 className="font-heading text-xl font-semibold tracking-tight text-ink uppercase">
             {product.name}
           </h3>
@@ -301,6 +350,6 @@ function ProductCard({
           <p className="text-[13px] leading-relaxed text-ink/75">{product.description}</p>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

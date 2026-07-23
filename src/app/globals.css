@@ -8,8 +8,8 @@
   --color-bg: #f2f2f3;
   --color-surface: #e9e9ea;
   --color-text: #1d1f20;
-  --color-accent: #5980a6;
-  --color-accent-2: #728fab;
+  --color-accent: #2e97d4;
+  --color-accent-2: #46b189;
   --color-divider: color-mix(in srgb, #1d1f20 16%, transparent);
   --color-nav-bg: #1d2d3d;
 
@@ -23,25 +23,33 @@
   --color-neutral-800: #424244;
   --color-neutral-900: #2b2b2d;
 
-  --color-accent-100: #eef6ff;
-  --color-accent-200: #d6ebff;
-  --color-accent-300: #b5d9fd;
-  --color-accent-400: #94bce3;
-  --color-accent-500: #749dc4;
-  --color-accent-600: #597ea3;
-  --color-accent-700: #416180;
-  --color-accent-800: #2c455d;
+  /* Accent scale — retuned to the logo's medical blue (brand-blue). Dark
+     end kept navy so the header/footer surfaces stay classy. */
+  --color-accent-100: #e9f4fb;
+  --color-accent-200: #cbe7f7;
+  --color-accent-300: #a2d4f0;
+  --color-accent-400: #6dbbe5;
+  --color-accent-500: #3ea3da;
+  --color-accent-600: #2e97d4;
+  --color-accent-700: #226f9f;
+  --color-accent-800: #1e4f6f;
   --color-accent-900: #1d2d3d;
 
-  --color-accent-2-100: #eef6ff;
-  --color-accent-2-200: #d6ebff;
-  --color-accent-2-300: #bdd8f2;
-  --color-accent-2-400: #9ebbd8;
-  --color-accent-2-500: #7e9cb8;
-  --color-accent-2-600: #627d98;
-  --color-accent-2-700: #486077;
-  --color-accent-2-800: #314457;
-  --color-accent-2-900: #1f2d3a;
+  /* Secondary scale — the logo's teal-green (brand-teal). */
+  --color-accent-2-100: #e7f6ef;
+  --color-accent-2-200: #c6ebdc;
+  --color-accent-2-300: #98dcc2;
+  --color-accent-2-400: #64c8a4;
+  --color-accent-2-500: #46b189;
+  --color-accent-2-600: #379a74;
+  --color-accent-2-700: #2c7d5e;
+  --color-accent-2-800: #245f49;
+  --color-accent-2-900: #1e4638;
+
+  /* Brand gradient — sampled from the Medisave "m" logomark (blue → teal). */
+  --brand-blue: #2e97d4;
+  --brand-teal: #46b189;
+  --brand-gradient: linear-gradient(115deg, var(--brand-blue) 0%, var(--brand-teal) 100%);
 
   --font-heading: var(--font-barlow-condensed), system-ui, sans-serif;
   --font-body: var(--font-barlow), system-ui, sans-serif;
@@ -53,9 +61,9 @@
   --space-6: 20.4px;
   --space-8: 27.2px;
 
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 7px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
 
   --shadow-sm: 0 1px 2px color-mix(in srgb, #2b2b2d 14%, transparent);
   --shadow-md: 0 3px 10px color-mix(in srgb, #2b2b2d 16%, transparent);
@@ -93,6 +101,9 @@
   --color-accent-2-800: var(--color-accent-2-800);
   --color-accent-2-900: var(--color-accent-2-900);
 
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-teal: var(--brand-teal);
+
   --color-neutral-100: var(--color-neutral-100);
   --color-neutral-200: var(--color-neutral-200);
   --color-neutral-300: var(--color-neutral-300);
@@ -121,6 +132,11 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Anchor targets clear the fixed floating nav instead of sliding under it. */
+section[id] {
+  scroll-margin-top: 96px;
 }
 
 @keyframes ms-fadeUp {
@@ -181,50 +197,17 @@ img {
 .blueprint {
   position: relative;
   border: 1px solid var(--color-divider);
-  border-radius: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 .blueprint.overlay-visible {
   overflow: visible;
 }
+/* The "+" registration marks belonged to the old square blueprint language.
+   The modernized cards are rounded and soft, so the marks are retired
+   globally — the markup can stay, it simply no longer renders. */
 .blueprint > .corner {
-  position: absolute;
-  width: 11px;
-  height: 11px;
-  color: color-mix(in srgb, var(--color-text) 55%, transparent);
-}
-.blueprint > .corner::before,
-.blueprint > .corner::after {
-  content: "";
-  position: absolute;
-  background: currentColor;
-}
-.blueprint > .corner::before {
-  left: 5px;
-  top: 0;
-  width: 1px;
-  height: 100%;
-}
-.blueprint > .corner::after {
-  top: 5px;
-  left: 0;
-  width: 100%;
-  height: 1px;
-}
-.blueprint > .corner.tl {
-  top: -6px;
-  left: -6px;
-}
-.blueprint > .corner.tr {
-  top: -6px;
-  right: -6px;
-}
-.blueprint > .corner.bl {
-  bottom: -6px;
-  left: -6px;
-}
-.blueprint > .corner.br {
-  bottom: -6px;
-  right: -6px;
+  display: none;
 }
 
 /* Duotone image treatment: tints an image/placeholder with the accent
@@ -240,44 +223,47 @@ img {
   pointer-events: none;
   background: var(--color-accent);
   mix-blend-mode: color;
+  opacity: 0.5;
 }
 
-/* Segmented control — used for the product filter bar. Square corners to
-   match the blueprint radius-0 language used everywhere else. */
+/* Segmented control — the product filter bar. A modern rounded pill toggle
+   group; the active option carries the brand blue→teal gradient. */
 .seg {
   display: inline-flex;
-  overflow: hidden;
+  gap: 4px;
+  padding: 5px;
+  background: color-mix(in srgb, var(--color-text) 5%, transparent);
   border: 1px solid var(--color-divider);
-  border-radius: 0;
+  border-radius: 999px;
 }
 .seg-opt {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 14px;
+  padding: 8px 18px;
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 13px;
   letter-spacing: 0.02em;
   cursor: pointer;
   background: transparent;
-  color: var(--color-text);
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
   border: none;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-.seg-opt + .seg-opt {
-  border-left: 1px solid var(--color-divider);
+  border-radius: 999px;
+  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 .seg-opt[aria-pressed="true"] {
-  background: var(--color-accent);
-  color: var(--color-bg);
+  background-image: var(--brand-gradient);
+  color: #fff;
+  box-shadow: 0 5px 14px -4px color-mix(in srgb, var(--brand-blue) 60%, transparent);
 }
 .seg-opt:not([aria-pressed="true"]):hover {
   background: color-mix(in srgb, var(--color-text) 7%, transparent);
+  color: var(--color-text);
 }
 .seg-opt:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: -2px;
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 2px;
 }
 
 /* Footer link hover: underline sweep + color shift + micro-nudge.
@@ -475,6 +461,64 @@ img {
   }
   .hero-indicator-dot.active .hero-indicator-progress {
     width: 100% !important;
+    transition: none !important;
+  }
+}
+
+/* ── Brand gradient utilities ───────────────────────────────────────────
+   The blue→teal signature lifted from the logo "m", exposed as reusable
+   fills for buttons, tags and accents in the modernized Products section. */
+.brand-gradient {
+  background-image: var(--brand-gradient);
+}
+.brand-text {
+  background-image: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Modern product card ────────────────────────────────────────────────
+   Replaces the square blueprint frame for the Products grid: rounded
+   corners, a soft resting shadow that deepens on hover, and a gradient
+   hairline ring that fades in on hover. No transforms on this element so
+   it never fights the GSAP Flip filter animation. */
+.product-card {
+  position: relative;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(29, 45, 61, 0.04),
+    0 10px 30px -16px rgba(29, 45, 61, 0.25);
+  transition: box-shadow 0.4s ease;
+}
+.product-card:hover {
+  box-shadow:
+    0 2px 4px rgba(29, 45, 61, 0.06),
+    0 24px 48px -20px color-mix(in srgb, var(--brand-blue) 38%, transparent);
+}
+.product-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  padding: 1px;
+  background: var(--brand-gradient);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+.product-card:hover::after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-card,
+  .product-card::after {
     transition: none !important;
   }
 }

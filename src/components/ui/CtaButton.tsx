@@ -23,22 +23,16 @@ export function CtaButton({
     <Link
       href={href}
       className={cn(
-        "group relative inline-flex items-center gap-2 overflow-hidden px-7 py-3.5",
+        "group relative inline-flex items-center gap-2 overflow-hidden rounded-full px-7 py-3.5",
         "font-heading text-sm font-semibold tracking-wide transition-all duration-300 ease-out",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-700",
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue",
         isPrimary
-          ? "border border-accent-700 bg-accent-700 !text-white hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-6px_rgba(44,69,93,0.55)]"
-          : "border border-divider bg-transparent text-ink hover:-translate-y-0.5 hover:border-accent-700 hover:text-accent-700",
+          ? "brand-gradient border border-transparent !text-white hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-8px_rgba(46,151,212,0.7)]"
+          : "border border-divider bg-transparent text-ink hover:-translate-y-0.5 hover:border-brand-blue hover:text-brand-blue",
         className
       )}
       {...props}
     >
-      {/* corner registration marks — kept even on the solid primary, per the blueprint language */}
-      <span className="pointer-events-none absolute -left-[1px] -top-[1px] h-2.5 w-2.5 border-l border-t border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-      <span className="pointer-events-none absolute -right-[1px] -top-[1px] h-2.5 w-2.5 border-r border-t border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-      <span className="pointer-events-none absolute -bottom-[1px] -left-[1px] h-2.5 w-2.5 border-b border-l border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-      <span className="pointer-events-none absolute -bottom-[1px] -right-[1px] h-2.5 w-2.5 border-b border-r border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-
       {/* shine sweep — a soft diagonal highlight that passes through on hover */}
       {isPrimary && (
         <span

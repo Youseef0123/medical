@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { navLinks } from "@/data/navigation";
 import { products } from "@/data/products";
 
@@ -31,20 +32,22 @@ const legalLinks = [
 
 export function Footer() {
   return (
-    <footer className="blueprint relative !border-x-0 !border-b-0 !border-white/12 bg-neutral-900 px-5 pt-16 pb-6 text-[#e8eaec] sm:px-8">
+    <footer className="blueprint relative !rounded-none !border-x-0 !border-b-0 !border-white/12 bg-neutral-900 px-5 pt-16 pb-6 text-[#e8eaec] sm:px-8">
       <i className="corner tl !text-white/40" aria-hidden />
       <i className="corner tr !text-white/40" aria-hidden />
 
       <div className="mx-auto max-w-[1200px]">
         <div className="grid grid-cols-1 gap-10 pb-10 sm:grid-cols-2 md:divide-x md:divide-white/12 lg:grid-cols-4">
           <div className="md:pr-10">
-            <span className="mb-2 flex items-baseline gap-0.5 font-heading text-[22px] font-semibold">
-              <span className="text-accent">m</span>
-              <span className="text-white">edisave</span>
-            </span>
-            <span className="mb-4 block text-[10px] tracking-[0.14em] text-white/55 uppercase">
-              Developed
-            </span>
+            {/* Dark-surface variant of the official logo (white wordmark,
+                gradient "m", transparent background). */}
+            <Image
+              src="/images/logo-dark.png"
+              alt="Medisave — Developed"
+              width={150}
+              height={41}
+              className="mb-5 h-10 w-auto object-contain"
+            />
             <p className="max-w-[32ch] text-[13px] leading-relaxed text-white/65">
               Pharmaceutical formulations manufactured to pharmacopeial
               standard, distributed across neurology, cardiology, metabolic
@@ -91,22 +94,17 @@ export function Footer() {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
-                  className="group relative flex h-9 w-9 items-center justify-center border border-white/15 text-white/70 transition-colors duration-300 hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  className="group relative flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70 transition-all duration-300 hover:border-accent hover:text-accent hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 >
-                  <span className="pointer-events-none absolute -left-px -top-px h-2 w-2 border-l border-t border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-                  <span className="pointer-events-none absolute -right-px -top-px h-2 w-2 border-r border-t border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-                  <span className="pointer-events-none absolute -bottom-px -left-px h-2 w-2 border-b border-l border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-                  <span className="pointer-events-none absolute -bottom-px -right-px h-2 w-2 border-b border-r border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-
                   {social.label === "Instagram" ? (
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                      <rect x="2" y="2" width="20" height="20" rx="0" />
+                      <rect x="2" y="2" width="20" height="20" rx="5" />
                       <circle cx="12" cy="12" r="4" />
                       <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
                     </svg>
                   ) : social.label === "LinkedIn" ? (
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                      <rect x="2" y="2" width="20" height="20" rx="0" />
+                      <rect x="2" y="2" width="20" height="20" rx="5" />
                       <line x1="7" y1="10" x2="7" y2="17" />
                       <line x1="7" y1="7" x2="7" y2="7.2" />
                       <path d="M11 17v-4a2 2 0 0 1 4 0v4" />

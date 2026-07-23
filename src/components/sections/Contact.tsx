@@ -148,7 +148,7 @@ export function Contact() {
                       placeholder="e.g., John Doe"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full rounded-none border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus:border-accent-700 focus:outline-none transition-colors duration-200"
+                      className="w-full rounded-xl border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus:border-accent-700 focus:outline-none transition-colors duration-200"
                     />
                   </div>
 
@@ -164,7 +164,7 @@ export function Contact() {
                       placeholder="e.g., john@example.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full rounded-none border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus:border-accent-700 focus:outline-none transition-colors duration-200"
+                      className="w-full rounded-xl border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus:border-accent-700 focus:outline-none transition-colors duration-200"
                     />
                   </div>
                 </div>
@@ -180,7 +180,7 @@ export function Contact() {
                       required
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="w-full appearance-none rounded-none border border-divider bg-white px-4 py-3 pr-10 text-sm font-medium text-ink focus:border-accent-700 focus:outline-none transition-colors duration-200"
+                      className="w-full appearance-none rounded-xl border border-divider bg-white px-4 py-3 pr-10 text-sm font-medium text-ink focus:border-accent-700 focus:outline-none transition-colors duration-200"
                     >
                       <option value="" disabled>Select inquiry type</option>
                       <option value="general">General Inquiry</option>
@@ -209,7 +209,7 @@ export function Contact() {
                     placeholder="Provide details about your query..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full rounded-none border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus:border-accent-700 focus:outline-none transition-colors duration-200 resize-y"
+                    className="w-full rounded-xl border border-divider bg-white px-4 py-3 text-sm font-medium text-ink placeholder:text-ink/30 focus:border-accent-700 focus:outline-none transition-colors duration-200 resize-y"
                   />
                 </div>
 
@@ -218,16 +218,10 @@ export function Contact() {
                   <button
                     type="submit"
                     className={cn(
-                      "group relative inline-flex items-center gap-2 overflow-hidden px-8 py-3.5 w-full justify-center border border-accent-700 bg-accent-700 text-white font-heading text-sm font-semibold tracking-wide transition-all duration-300 ease-out cursor-pointer",
-                      "hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-6px_rgba(44,69,93,0.55)]"
+                      "group relative inline-flex items-center gap-2 overflow-hidden rounded-full px-8 py-3.5 w-full justify-center brand-gradient border border-transparent text-white font-heading text-sm font-semibold tracking-wide transition-all duration-300 ease-out cursor-pointer",
+                      "hover:-translate-y-0.5 hover:shadow-[0_12px_30px_-8px_rgba(46,151,212,0.7)]"
                     )}
                   >
-                    {/* corner marks inside submit */}
-                    <span className="pointer-events-none absolute -left-[1px] -top-[1px] h-2.5 w-2.5 border-l border-t border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-                    <span className="pointer-events-none absolute -right-[1px] -top-[1px] h-2.5 w-2.5 border-r border-t border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-                    <span className="pointer-events-none absolute -bottom-[1px] -left-[1px] h-2.5 w-2.5 border-b border-l border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-                    <span className="pointer-events-none absolute -bottom-[1px] -right-[1px] h-2.5 w-2.5 border-b border-r border-current opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
-                    
                     {/* shine sweep */}
                     <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
                     
