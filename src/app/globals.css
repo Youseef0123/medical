@@ -227,6 +227,29 @@ img {
   right: -6px;
 }
 
+/* Product flip card: hover lift, elevated shadow, and accent-tinted
+   registration corners. Corner tint uses a source-order rule with the
+   same specificity as `.blueprint > .corner` so it wins on hover. */
+.product-flip {
+  transition: transform 300ms ease, box-shadow 300ms ease;
+}
+.product-flip:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.product-flip > .corner {
+  transition: color 300ms ease;
+}
+.product-flip:hover > .corner {
+  color: var(--color-accent-700);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-flip:hover {
+    transform: none;
+  }
+}
+
 /* Duotone image treatment: tints an image/placeholder with the accent
    color via a blend-mode overlay. */
 .duotone {

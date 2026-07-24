@@ -1,12 +1,13 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
+import { RotateCw } from "lucide-react";
 import { products } from "@/data/products";
 import { Card } from "@/components/ui/Card";
 import { Tag } from "@/components/ui/Tag";
 import { ImageSlot } from "@/components/ui/ImageSlot";
 import { Button } from "@/components/ui/Button";
-import { gsap, Flip } from "@/lib/gsap";
+import { gsap, ScrollTrigger, Flip } from "@/lib/gsap";
 import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
 import { useHoverCapable } from "@/lib/hooks/useHoverCapable";
 import { cn } from "@/lib/cn";
@@ -18,14 +19,88 @@ function filterByCategory(category: string): Product[] {
   return category === "All" ? products : products.filter((p) => p.category === category);
 }
 
+const CATEGORY_COUNTS: Record<string, number> = Object.fromEntries(
+  CATEGORIES.map((category) => [category, filterByCategory(category).length])
+);
+
 export function Products() {
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [leavingSlugs, setLeavingSlugs] = useState<Set<string>>(new Set());
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const pendingFlipState = useRef<ReturnType<typeof Flip.getState> | null>(null);
   const enteringSlugsRef = useRef<Set<string>>(new Set());
+  const gridRef = useRef<HTMLDivElement>(null);
+  const segRef = useRef<HTMLDivElement>(null);
+  const highlightRef = useRef<HTMLSpanElement>(null);
+  const segBtnRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const prefersReducedMotion = usePrefersReducedMotion();
   const hoverCapable = useHoverCapable();
+
+  const highlightReady = useRef(false);
+
+  // Slide the filter highlight to sit behind the active category button.
+  useLayoutEffect(() => {
+    const position = (animate: boolean) => {
+      const seg = segRef.current;
+      const hl = highlightRef.current;
+      const btn = segBtnRefs.current.get(activeCategory);
+      if (!seg || !hl || !btn) return;
+
+      const props = {
+        x: btn.offsetLeft,
+        y: btn.offsetTop,
+        width: btn.offsetWidth,
+        height: btn.offsetHeight,
+      };
+
+      if (animate && !prefersReducedMotion) {
+        gsap.to(hl, { ...props, duration: 0.4, ease: "power3.out" });
+      } else {
+        gsap.set(hl, props);
+      }
+    };
+
+    // Snap into place on first paint; animate on later category changes.
+    position(highlightReady.current);
+    highlightReady.current = true;
+
+    const onResize = () => position(false);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [activeCategory, prefersReducedMotion]);
+
+  // One-time staggered reveal when the grid first scrolls into view.
+  // Clears its inline props on completion so the Flip filtering below
+  // starts from a clean slate.
+  useLayoutEffect(() => {
+    if (prefersReducedMotion) return;
+
+    const ctx = gsap.context(() => {
+      const els = Array.from(cardRefs.current.values());
+      if (!els.length) return;
+
+      gsap.set(els, { opacity: 0, y: 28, scale: 0.96 });
+
+      ScrollTrigger.create({
+        trigger: gridRef.current,
+        start: "top 82%",
+        once: true,
+        onEnter: () => {
+          gsap.to(els, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: "power3.out",
+            stagger: { each: 0.06, from: "start" },
+            onComplete: () => gsap.set(els, { clearProps: "opacity,transform" }),
+          });
+        },
+      });
+    }, gridRef);
+
+    return () => ctx.revert();
+  }, [prefersReducedMotion]);
 
   // Runs after a filter change has committed to the DOM: replays the
   // captured Flip state so staying/incoming cards slide into their new
@@ -111,32 +186,68 @@ export function Products() {
   return (
     <section id="products" className="bg-neutral-100 px-5 py-22 sm:px-8">
       <div className="mx-auto max-w-[1200px]">
-        <div className="mb-9 text-center">
-          <span className="mb-3 block text-[13px] font-semibold tracking-[0.08em] text-accent-700 uppercase">
+        {/* Editorial header: kicker tick · rule · section index */}
+        <div className="mb-9 flex items-center gap-4">
+          <span className="flex items-center gap-3 text-[13px] font-semibold tracking-[0.14em] text-accent-700 uppercase whitespace-nowrap">
+            <span className="h-px w-7 bg-accent-700/60" />
             Our Products
           </span>
-          <h2 className="text-[32px] font-semibold tracking-tight text-ink uppercase">
-            Formulations you can rely on
-          </h2>
+          <span className="h-px flex-1 bg-divider" />
+          <span className="font-heading text-[13px] font-semibold tracking-[0.15em] text-ink/40 tabular-nums">
+            03
+          </span>
         </div>
+        <h2 className="mb-9 font-heading font-semibold leading-[1.05] tracking-tight text-ink uppercase [font-size:clamp(1.75rem,3.4vw,2.75rem)]">
+          Formulations you can rely on
+        </h2>
 
+        {/* Filter bar: sliding highlight + per-category counts */}
         <div className="mb-9 flex justify-center">
-          <div className="seg flex-wrap">
-            {CATEGORIES.map((category) => (
-              <button
-                key={category}
-                type="button"
-                className="seg-opt"
-                aria-pressed={activeCategory === category}
-                onClick={() => handleFilterChange(category)}
-              >
-                {category}
-              </button>
-            ))}
+          <div
+            ref={segRef}
+            className="relative inline-flex flex-wrap border border-divider bg-bg"
+            role="group"
+            aria-label="Filter products by category"
+          >
+            <span
+              ref={highlightRef}
+              aria-hidden
+              className="pointer-events-none absolute left-0 top-0 z-0 bg-accent"
+            />
+            {CATEGORIES.map((category, i) => {
+              const isActive = activeCategory === category;
+              return (
+                <button
+                  key={category}
+                  ref={(el) => {
+                    if (el) segBtnRefs.current.set(category, el);
+                    else segBtnRefs.current.delete(category);
+                  }}
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => handleFilterChange(category)}
+                  className={cn(
+                    "relative z-10 inline-flex items-center gap-2 px-3.5 py-2 font-heading text-[13px] font-semibold tracking-[0.02em] transition-colors duration-300",
+                    i > 0 && "border-l border-divider",
+                    isActive ? "text-white" : "text-ink hover:text-accent-700"
+                  )}
+                >
+                  <span>{category}</span>
+                  <span
+                    className={cn(
+                      "text-[11px] tabular-nums transition-colors duration-300",
+                      isActive ? "text-white/70" : "text-ink/40"
+                    )}
+                  >
+                    {CATEGORY_COUNTS[category]}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={gridRef} className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
           {visibleProducts.map((product) => (
             <ProductCard
               key={product.slug}
@@ -238,7 +349,10 @@ function ProductCard({
     <Card
       ref={registerRef}
       aria-hidden={hidden}
-      className={cn("group aspect-3/4 [perspective:1000px]", hidden && "pointer-events-none")}
+      className={cn(
+        "product-flip group aspect-3/4 [perspective:1000px]",
+        hidden && "pointer-events-none"
+      )}
       onClick={!hoverCapable ? toggle : undefined}
       role={!hoverCapable ? "button" : undefined}
       tabIndex={!hoverCapable ? (hidden ? -1 : 0) : undefined}
@@ -276,10 +390,17 @@ function ProductCard({
             <p className="text-sm text-ink/80">{product.ingredient}</p>
             <p className="mt-1 text-[13px] text-ink/60 tabular-nums">{product.dosage}</p>
           </div>
+
+          {/* Flip affordance cue — fades out as the card flips on hover;
+              stays visible on touch as a tap hint. */}
+          <span className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/40 transition-opacity duration-300 group-hover:opacity-0">
+            <RotateCw className="h-3 w-3" strokeWidth={2} />
+            {hoverCapable ? "Hover" : "Tap"}
+          </span>
         </div>
 
         {/* Back face */}
-        <div className="absolute inset-0 flex flex-col justify-center gap-3 p-5 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+        <div className="absolute inset-0 flex flex-col justify-center gap-3 bg-neutral-100 p-5 [backface-visibility:hidden] [transform:rotateY(180deg)]">
           <Tag variant="outline" className="self-start">
             {product.type}
           </Tag>
