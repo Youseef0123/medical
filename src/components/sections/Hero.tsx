@@ -14,10 +14,10 @@ interface HeroProps {
 }
 
 const slideImages = [
-  "/images/hero/brand.png",
-  "/images/hero/neurology.png",
-  "/images/hero/mental.png",
-  "/images/hero/legacy.png",
+  "/images/hero/brand.jpg",
+  "/images/hero/neurology.jpg",
+  "/images/hero/mental.jpg",
+  "/images/hero/legacy.jpg",
 ];
 
 export function Hero({ autoplayMs = 5000 }: HeroProps) {

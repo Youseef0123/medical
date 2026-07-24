@@ -7,10 +7,10 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 import type { StatCounter } from "@/types";
 
 const SCROLL_IMAGES = [
-  { src: "/images/about/research.png", alt: "Medisave researcher examining a vial in the lab" },
-  { src: "/images/about/quality.png", alt: "Quality control inspection of pharmaceutical tablets" },
-  { src: "/images/about/manufacturing.png", alt: "Automated pharmaceutical packaging line" },
-  { src: "/images/about/facility.png", alt: "Medisave facility exterior" },
+  { src: "/images/about/research.jpg", alt: "Medisave researcher examining a vial in the lab" },
+  { src: "/images/about/quality.jpg", alt: "Quality control inspection of pharmaceutical tablets" },
+  { src: "/images/about/manufacturing.jpg", alt: "Automated pharmaceutical packaging line" },
+  { src: "/images/about/facility.jpg", alt: "Medisave facility exterior" },
 ];
 
 function formatCount(stat: StatCounter, value: number) {
