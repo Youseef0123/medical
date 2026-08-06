@@ -7,20 +7,57 @@ import { cn } from "@/lib/cn";
 import { gsap } from "@/lib/gsap";
 import { companyInfo } from "@/data/company";
 
+import { submitContactForm } from "@/lib/strapi";
+import { Loader2, XCircle } from "lucide-react";
+
 export function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "",
+    subject: "general",
     message: "",
   });
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setStatus("loading");
+    setErrorMessage("");
+    setFieldErrors({});
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setStatus("error");
+      setErrorMessage("Please enter a valid email address.");
+      setFieldErrors({ email: "Please enter a valid email address." });
+      return;
+    }
+
+    try {
+      const res = await submitContactForm({
+        fullName: formData.name.trim(),
+        email: formData.email.trim(),
+        subject: formData.subject || "general",
+        message: formData.message.trim(),
+      });
+
+      if (res.success) {
+        setStatus("success");
+        setSubmitted(true);
+      } else {
+        setStatus("error");
+        setErrorMessage(res.message || "Failed to send message. Please try again.");
+        if (res.errors) setFieldErrors(res.errors);
+      }
+    } catch {
+      setStatus("error");
+      setErrorMessage("Unable to send your message right now, please try again later.");
+    }
   };
 
   useLayoutEffect(() => {

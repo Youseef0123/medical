@@ -30,6 +30,8 @@ import {
   XCircle,
 } from "lucide-react";
 
+import { submitContactForm } from "@/lib/strapi";
+
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -41,6 +43,8 @@ export default function ContactPage() {
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [successMessage, setSuccessMessage] = useState("");
 
   const mainRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -48,40 +52,43 @@ export default function ContactPage() {
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const audienceRef = useRef<HTMLDivElement>(null);
 
-  /**
-   * TODO: Strapi CMS API Integration Notice
-   * ---------------------------------------------------------------------------
-   * This submit handler simulates a network API call to Strapi backend.
-   * When Strapi is live, replace the setTimeout block with:
-   *
-   * const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/contact-inquiries`, {
-   *   method: "POST",
-   *   headers: { "Content-Type": "application/json" },
-   *   body: JSON.stringify({ data: formData }),
-   * });
-   * ---------------------------------------------------------------------------
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
     setErrorMessage("");
+    setFieldErrors({});
 
-    // Simple email format validation
+    // Client-side email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
+    if (!emailRegex.test(formData.email.trim())) {
       setStatus("error");
       setErrorMessage("Please enter a valid email address.");
+      setFieldErrors({ email: "Please enter a valid email address." });
       return;
     }
 
     try {
-      // Simulate asynchronous API request (Mock submit)
-      await new Promise((resolve) => setTimeout(resolve, 1200));
+      const response = await submitContactForm({
+        fullName: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        subject: formData.subject,
+        message: formData.message.trim(),
+      });
 
-      setStatus("success");
+      if (response.success) {
+        setStatus("success");
+        setSuccessMessage(response.message || "Your message has been sent successfully");
+      } else {
+        setStatus("error");
+        setErrorMessage(response.message || "Failed to send message. Please try again.");
+        if (response.errors) {
+          setFieldErrors(response.errors);
+        }
+      }
     } catch {
       setStatus("error");
-      setErrorMessage("Failed to send message. Please try again later.");
+      setErrorMessage("Unable to send your message right now, please try again later.");
     }
   };
 
@@ -210,6 +217,9 @@ export default function ContactPage() {
                             }
                             className="w-full rounded-xl border border-divider bg-neutral-50 px-4 py-3.5 text-sm font-medium text-ink placeholder:text-ink/35 transition-all duration-200 focus:border-brand-blue focus:bg-white focus:shadow-[0_0_0_3px_rgba(46,151,212,0.15)] focus:outline-none"
                           />
+                          {fieldErrors.fullName && (
+                            <span className="text-xs text-red-600 font-medium">{fieldErrors.fullName}</span>
+                          )}
                         </div>
 
                         {/* Email Address */}
@@ -231,6 +241,9 @@ export default function ContactPage() {
                             }
                             className="w-full rounded-xl border border-divider bg-neutral-50 px-4 py-3.5 text-sm font-medium text-ink placeholder:text-ink/35 transition-all duration-200 focus:border-brand-blue focus:bg-white focus:shadow-[0_0_0_3px_rgba(46,151,212,0.15)] focus:outline-none"
                           />
+                          {fieldErrors.email && (
+                            <span className="text-xs text-red-600 font-medium">{fieldErrors.email}</span>
+                          )}
                         </div>
                       </div>
 
