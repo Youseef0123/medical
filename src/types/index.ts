@@ -63,3 +63,18 @@ export interface EventItem {
   coverImage: string;
   images: string[];
 }
+
+export type JobType = "Full-time" | "Part-time" | "Internship" | "Contract";
+
+export interface Job {
+  id: string;
+  slug: string;
+  title: string;
+  department: string;
+  location: string;
+  type: JobType;
+  postedDate: string;
+  description: string;
+  responsibilities: string[];
+  requirements: string[];
+}
