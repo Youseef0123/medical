@@ -16,10 +16,10 @@ const barlowCondensed = Barlow_Condensed({
   display: "swap",
 });
 
-const siteUrl = "https://www.medisave.example";
-const title = "Medisave — Pharmaceutical formulations manufactured to standard";
+const siteUrl = "https://www.medisavepharma.com";
+const title = "Medisave Pharma — Specialized Medications & Formulations";
 const description =
-  "Medisave develops and manufactures pharmaceutical products across neurology, mental health, cardiology and metabolic care, validated against pharmacopeial standard and traceable batch by batch.";
+  "Medisave Pharma develops and manufactures high-standard pharmaceutical products across neurology, mental health, cardiology and metabolic care in Egypt.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

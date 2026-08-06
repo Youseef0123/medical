@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { navLinks } from "@/data/navigation";
 import { products } from "@/data/products";
+import { companyInfo } from "@/data/company";
 
 const socialLinks = [
   {
@@ -78,15 +79,18 @@ export function Footer() {
           </div>
 
           <div className="md:pl-10">
-            <h6 className="mb-5">Contact</h6>
-            <p className="mb-4 text-sm leading-loose text-white/75">
-              142 Harbourview Industrial Park
+            <h6 className="mb-5">Contact Us</h6>
+            <p className="mb-4 text-sm leading-relaxed text-white/75">
+              {companyInfo.address}
               <br />
-              Unit 4, Dockside District
               <br />
-              info@medisave.com
+              <a href={`mailto:${companyInfo.email}`} className="hover:text-accent transition-colors">
+                {companyInfo.email}
+              </a>
               <br />
-              +1 (555) 240-9917
+              <a href={`tel:${companyInfo.phoneTel}`} className="hover:text-accent transition-colors">
+                {companyInfo.phoneDisplay}
+              </a>
             </p>
             <div className="flex gap-3">
               {socialLinks.map((social) => (

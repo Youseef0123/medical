@@ -90,16 +90,9 @@ export function Hero({ autoplayMs = 5000 }: HeroProps) {
                   <div className="hero-text-animate hero-text-buttons flex flex-wrap gap-4">
                     <CtaButton
                       variant="primary"
-                      href="#products"
+                      href="/about"
                     >
-                      {slide.cta}
-                    </CtaButton>
-                    <CtaButton
-                      variant="secondary"
-                      href="#about"
-                      className="!text-white/80 hover:!text-white !border-white/20 hover:!border-white/50"
-                    >
-                      Learn more
+                      About Medisave
                     </CtaButton>
                   </div>
                 </div>

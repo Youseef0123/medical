@@ -21,7 +21,7 @@ export default function Home() {
         <WhyChooseUs />
         <Contact />
         {/* <Newsletter /> */}
-        <Certifications />
+        {/* <Certifications /> */}
       </main>
       <Footer />
     </>

@@ -28,7 +28,7 @@ export interface FeatureCard {
   title: string;
   description: string;
   stat: string;
-  icon: "quality" | "innovation" | "safety" | "accessibility";
+  icon: "quality" | "trust" | "accessibility" | "integrity";
 }
 
 export interface Certification {
@@ -48,4 +48,18 @@ export interface StatCounter {
   target: number;
   suffix: string;
   format?: "thousand";
+}
+
+export type EventCategory = "all" | "celebrations" | "conferences" | "exhibitions" | "partnerships";
+
+export interface EventItem {
+  id: string;
+  title: string;
+  category: Exclude<EventCategory, "all">;
+  categoryLabel: string;
+  description: string;
+  date: string;
+  location?: string;
+  coverImage: string;
+  images: string[];
 }
