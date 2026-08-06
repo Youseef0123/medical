@@ -88,43 +88,18 @@ export default function EventsPage() {
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       if (heroRef.current) {
-        gsap.from(heroRef.current.querySelectorAll(".hero-anim"), {
-          opacity: 0,
-          y: 24,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power3.out",
-        });
-      }
-
-      if (galleryRef.current) {
-        gsap.from(galleryRef.current.querySelectorAll(".gallery-item"), {
-          scrollTrigger: {
-            trigger: galleryRef.current,
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
-          opacity: 0,
-          y: 35,
-          duration: 0.7,
-          stagger: 0.1,
-          ease: "power2.out",
-        });
-      }
-
-      if (cardsRef.current) {
-        gsap.from(cardsRef.current.querySelectorAll(".event-card"), {
-          scrollTrigger: {
-            trigger: cardsRef.current,
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
-          opacity: 0,
-          y: 35,
-          duration: 0.7,
-          stagger: 0.15,
-          ease: "power2.out",
-        });
+        gsap.fromTo(
+          heroRef.current.querySelectorAll(".hero-anim"),
+          { opacity: 0, y: 24 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            clearProps: "all",
+          }
+        );
       }
     }, mainRef);
 
@@ -134,12 +109,23 @@ export default function EventsPage() {
   // Filter click scroll anchor
   const handleFilterClick = (catKey: EventCategory) => {
     setActiveCategory(catKey);
-    // Smooth animate items refresh
+    // Smooth animate items refresh with clearProps: all
     if (galleryRef.current) {
+      const items = galleryRef.current.querySelectorAll(".gallery-item");
       gsap.fromTo(
-        galleryRef.current.querySelectorAll(".gallery-item"),
+        items,
         { opacity: 0, scale: 0.96 },
-        { opacity: 1, scale: 1, duration: 0.4, stagger: 0.05, ease: "power2.out" }
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.4,
+          stagger: 0.04,
+          ease: "power2.out",
+          clearProps: "all",
+          onComplete: () => {
+            gsap.set(items, { clearProps: "all" });
+          },
+        }
       );
     }
   };
@@ -150,11 +136,11 @@ export default function EventsPage() {
   return (
     <>
       <Header />
-      <main ref={mainRef} className="flex-1 bg-bg pt-20">
+      <main ref={mainRef} className="flex-1 bg-bg">
         {/* ── 1. Hero Section (Mini Hero for Events & News Page) ────── */}
         <section
           ref={heroRef}
-          className="relative overflow-hidden bg-neutral-900 px-5 py-20 text-white sm:px-8 md:py-28"
+          className="relative overflow-hidden bg-neutral-900 px-5 pt-32 pb-16 text-white sm:px-8 md:pt-40 md:pb-24"
         >
           <div className="absolute inset-0 z-0">
             <Image
@@ -162,10 +148,10 @@ export default function EventsPage() {
               alt="Medisave Events"
               fill
               priority
-              className="object-cover opacity-25 transition-transform duration-1000 ease-out hover:scale-105"
+              className="object-cover opacity-65 transition-transform duration-1000 ease-out hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/90 to-neutral-950/60" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--brand-teal)_0%,transparent_60%)] opacity-20" />
+            <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/75 via-neutral-950/45 to-neutral-950/20" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--brand-teal)_0%,transparent_60%)] opacity-25" />
           </div>
 
           <div className="relative z-10 mx-auto max-w-[1200px]">
@@ -246,7 +232,7 @@ export default function EventsPage() {
                 <div
                   key={photo.id}
                   onClick={() => handleOpenLightbox(idx)}
-                  className="gallery-item group relative mb-6 cursor-pointer overflow-hidden rounded-2xl border border-divider bg-neutral-900 shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl"
+                  className="gallery-item break-inside-avoid group relative mb-6 cursor-pointer overflow-hidden rounded-2xl border border-divider bg-neutral-900 shadow-md transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl"
                 >
                   {/* Image container */}
                   <div className={`relative w-full ${photo.aspectRatio} overflow-hidden`}>

@@ -24,26 +24,8 @@ export function Contact() {
   };
 
   useLayoutEffect(() => {
-    const section = sectionRef.current;
-    if (!section || prefersReducedMotion) return;
-
-    const ctx = gsap.context(() => {
-      gsap.from(section.querySelectorAll(".animate-fade-up"), {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 85%",
-          toggleActions: "play none none reverse",
-        },
-      });
-    }, section);
-
-    return () => ctx.revert();
-  }, [prefersReducedMotion]);
+    // Keep section clean with 100% opacity
+  }, []);
 
   return (
     <section id="contact" ref={sectionRef} className="bg-white px-5 py-24 sm:px-8 border-t border-divider">

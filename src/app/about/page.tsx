@@ -27,65 +27,22 @@ export default function AboutPage() {
   const visionRef = useRef<HTMLDivElement>(null);
   const valuesRef = useRef<HTMLDivElement>(null);
 
+  // GSAP Animations
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // Hero entrance
       if (heroRef.current) {
-        gsap.from(heroRef.current.querySelectorAll(".hero-anim"), {
-          opacity: 0,
-          y: 24,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power3.out",
-        });
-      }
-
-      // Intro section animation
-      if (introRef.current) {
-        gsap.from(introRef.current.querySelectorAll(".intro-anim"), {
-          scrollTrigger: {
-            trigger: introRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-          opacity: 0,
-          y: 30,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: "power2.out",
-        });
-      }
-
-      // Vision & Mission cards animation
-      if (visionRef.current) {
-        gsap.from(visionRef.current.querySelectorAll(".vision-card"), {
-          scrollTrigger: {
-            trigger: visionRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-          opacity: 0,
-          y: 35,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: "power3.out",
-        });
-      }
-
-      // Values section cards animation
-      if (valuesRef.current) {
-        gsap.from(valuesRef.current.querySelectorAll(".value-card"), {
-          scrollTrigger: {
-            trigger: valuesRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-          opacity: 0,
-          y: 40,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power3.out",
-        });
+        gsap.fromTo(
+          heroRef.current.querySelectorAll(".hero-anim"),
+          { opacity: 0, y: 24 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            clearProps: "all",
+          }
+        );
       }
     }, mainRef);
 
@@ -95,11 +52,11 @@ export default function AboutPage() {
   return (
     <>
       <Header />
-      <main ref={mainRef} className="flex-1 bg-bg pt-20">
+      <main ref={mainRef} className="flex-1 bg-bg">
         {/* ── 1. Hero Section (Mini Hero for About Page) ──────────────── */}
         <section
           ref={heroRef}
-          className="relative overflow-hidden bg-neutral-900 px-5 py-20 text-white sm:px-8 md:py-28"
+          className="relative overflow-hidden bg-neutral-900 px-5 pt-32 pb-16 text-white sm:px-8 md:pt-40 md:pb-24"
         >
           {/* Background image & gradient overlay */}
           <div className="absolute inset-0 z-0">
@@ -108,10 +65,10 @@ export default function AboutPage() {
               alt="Medisave Pharmaceutical Lab"
               fill
               priority
-              className="object-cover opacity-35 transition-transform duration-1000 ease-out hover:scale-105"
+              className="object-cover opacity-65 transition-transform duration-1000 ease-out hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/90 to-neutral-950/60" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--brand-blue)_0%,transparent_60%)] opacity-20" />
+            <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/75 via-neutral-950/45 to-neutral-950/20" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--brand-blue)_0%,transparent_60%)] opacity-25" />
           </div>
 
           <div className="relative z-10 mx-auto max-w-[1200px]">

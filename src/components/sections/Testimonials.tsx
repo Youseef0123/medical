@@ -30,18 +30,23 @@ export function Testimonials() {
     if (!section || prefersReducedMotion) return;
 
     const ctx = gsap.context(() => {
-      gsap.from(section.querySelectorAll(".animate-fade-up"), {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 85%",
-          toggleActions: "play none none reverse",
-        },
-      });
+      gsap.fromTo(
+        section.querySelectorAll(".animate-fade-up"),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power2.out",
+          clearProps: "all",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
     }, section);
 
     return () => ctx.revert();
@@ -50,7 +55,7 @@ export function Testimonials() {
   return (
     <section id="testimonials" ref={sectionRef} className="bg-neutral-50 px-5 py-24 sm:px-8 border-t border-divider">
       <div className="mx-auto max-w-[1200px] grid gap-12 lg:grid-cols-[1fr_1.3fr] items-start">
-        
+
         {/* Left Column: Sticky Title & Navigation */}
         <div className="animate-fade-up sticky top-28 space-y-8 lg:pr-6">
           <div>
@@ -69,7 +74,7 @@ export function Testimonials() {
               <span className="mx-1.5 text-ink/20">/</span>
               <span>0{testimonials.length}</span>
             </div>
-            
+
             <div className="flex gap-2">
               <button
                 type="button"
@@ -125,7 +130,7 @@ export function Testimonials() {
                   </span>
 
                   {/* Testimonial Quote text */}
-                  <p 
+                  <p
                     aria-live="polite"
                     className="relative z-10 mb-8 font-body text-lg sm:text-xl leading-relaxed text-ink/90 font-medium"
                   >

@@ -45,8 +45,8 @@ export function About() {
         const statsTl = gsap.timeline({
           scrollTrigger: {
             trigger: statsRowRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
+            start: "top 85%",
+            toggleActions: "play none none none",
           },
         });
 
@@ -131,8 +131,8 @@ export function About() {
             const mobileTl = gsap.timeline({
               scrollTrigger: {
                 trigger: section,
-                start: "top 80%",
-                toggleActions: "play none none reverse",
+                start: "top 85%",
+                toggleActions: "play none none none",
               },
             });
             mobileTl.to(images[0], { opacity: 1, duration: 0.6, ease: "power2.out" }, 0);

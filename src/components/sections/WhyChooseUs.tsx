@@ -32,7 +32,8 @@ const icons: Record<FeatureCard["icon"], React.ReactNode> = {
 
 export function WhyChooseUs() {
   const { ref, isIntersecting } = useIntersectionObserver<HTMLElement>({
-    threshold: 0.2,
+    threshold: 0.15,
+    triggerOnce: true,
   });
 
   return (
