@@ -28,7 +28,7 @@ export function Header() {
         )}
       >
         <a
-          href="#home"
+          href="/"
           className="mr-auto flex items-center transition-all duration-700 ease-out"
         >
           {/* Dark-surface variant of the official logo: identical gradient
@@ -59,7 +59,7 @@ export function Header() {
             </a>
           ))}
           <CtaButton
-            href="#contact"
+            href="/contact"
             variant="primary"
           >
             Contact Us
@@ -110,7 +110,7 @@ export function Header() {
             </a>
           ))}
           <CtaButton
-            href="#contact"
+            href="/contact"
             variant="primary"
             className="w-full mt-4"
             onClick={() => setMobileOpen(false)}

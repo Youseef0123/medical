@@ -10,13 +10,10 @@ const icons: Record<FeatureCard["icon"], React.ReactNode> = {
   quality: (
     <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" />
   ),
-  innovation: (
-    <path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 2z" />
-  ),
-  safety: (
+  trust: (
     <>
-      <rect x="4" y="10" width="16" height="10" />
-      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="m9 12 2 2 4-4" />
     </>
   ),
   accessibility: (
@@ -25,11 +22,18 @@ const icons: Record<FeatureCard["icon"], React.ReactNode> = {
       <path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7z" />
     </>
   ),
+  integrity: (
+    <>
+      <rect x="4" y="10" width="16" height="10" rx="2" />
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </>
+  ),
 };
 
 export function WhyChooseUs() {
   const { ref, isIntersecting } = useIntersectionObserver<HTMLElement>({
-    threshold: 0.2,
+    threshold: 0.15,
+    triggerOnce: true,
   });
 
   return (

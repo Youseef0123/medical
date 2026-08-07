@@ -1,48 +1,68 @@
 "use client";
 
 import { useState, useLayoutEffect, useRef } from "react";
-import { MapPin, Mail, Phone, CheckCircle } from "lucide-react";
+import { MapPin, Mail, Phone, CheckCircle, Globe } from "lucide-react";
 import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/cn";
 import { gsap } from "@/lib/gsap";
+import { companyInfo } from "@/data/company";
+
+import { submitContactForm } from "@/lib/strapi";
+import { Loader2, XCircle } from "lucide-react";
 
 export function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "",
+    subject: "general",
     message: "",
   });
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setStatus("loading");
+    setErrorMessage("");
+    setFieldErrors({});
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setStatus("error");
+      setErrorMessage("Please enter a valid email address.");
+      setFieldErrors({ email: "Please enter a valid email address." });
+      return;
+    }
+
+    try {
+      const res = await submitContactForm({
+        fullName: formData.name.trim(),
+        email: formData.email.trim(),
+        subject: formData.subject || "general",
+        message: formData.message.trim(),
+      });
+
+      if (res.success) {
+        setStatus("success");
+        setSubmitted(true);
+      } else {
+        setStatus("error");
+        setErrorMessage(res.message || "Failed to send message. Please try again.");
+        if (res.errors) setFieldErrors(res.errors);
+      }
+    } catch {
+      setStatus("error");
+      setErrorMessage("Unable to send your message right now, please try again later.");
+    }
   };
 
   useLayoutEffect(() => {
-    const section = sectionRef.current;
-    if (!section || prefersReducedMotion) return;
-
-    const ctx = gsap.context(() => {
-      gsap.from(section.querySelectorAll(".animate-fade-up"), {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 85%",
-          toggleActions: "play none none reverse",
-        },
-      });
-    }, section);
-
-    return () => ctx.revert();
-  }, [prefersReducedMotion]);
+    // Keep section clean with 100% opacity
+  }, []);
 
   return (
     <section id="contact" ref={sectionRef} className="bg-white px-5 py-24 sm:px-8 border-t border-divider">
@@ -75,9 +95,9 @@ export function Contact() {
                 <MapPin className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-heading text-xs font-bold text-ink uppercase tracking-wide">HQ & Manufacturing Complex</h4>
-                <p className="mt-1.5 text-sm text-ink/75 leading-relaxed">
-                  Building 12, Biotech City Parkway, Industrial Area
+                <h4 className="font-heading text-xs font-bold text-ink uppercase tracking-wide">Headquarters Address</h4>
+                <p className="mt-1.5 text-sm text-ink/80 leading-relaxed font-medium">
+                  {companyInfo.address}
                 </p>
               </div>
             </div>
@@ -92,12 +112,11 @@ export function Contact() {
                 <Mail className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-heading text-xs font-bold text-ink uppercase tracking-wide">Direct Communications</h4>
-                <p className="mt-1.5 text-sm text-ink/75 font-semibold">
-                  <a href="mailto:inquiries@medisave.com" className="hover:text-accent-700 transition-colors">inquiries@medisave.com</a>
-                </p>
-                <p className="text-xs text-ink/60 mt-0.5">
-                  Quality support: <a href="mailto:quality@medisave.com" className="hover:text-accent-700 transition-colors">quality@medisave.com</a>
+                <h4 className="font-heading text-xs font-bold text-ink uppercase tracking-wide">Email Us</h4>
+                <p className="mt-1.5 text-sm text-ink/80 font-semibold">
+                  <a href={`mailto:${companyInfo.email}`} className="hover:text-accent-700 transition-colors">
+                    {companyInfo.email}
+                  </a>
                 </p>
               </div>
             </div>
@@ -112,12 +131,30 @@ export function Contact() {
                 <Phone className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="font-heading text-xs font-bold text-ink uppercase tracking-wide">Direct Phone Lines</h4>
-                <p className="mt-1.5 text-sm text-ink/75 font-semibold">
-                  +1 (555) 392-4801
+                <h4 className="font-heading text-xs font-bold text-ink uppercase tracking-wide">Phone Line</h4>
+                <p className="mt-1.5 text-sm text-ink/80 font-semibold">
+                  <a href={`tel:${companyInfo.phoneTel}`} className="hover:text-accent-700 transition-colors">
+                    {companyInfo.phoneDisplay}
+                  </a>
                 </p>
-                <p className="text-xs text-ink/60 mt-0.5">
-                  Mon-Fri, 9:00 AM - 5:00 PM EST
+              </div>
+            </div>
+
+            {/* Website */}
+            <div className="blueprint relative p-5 bg-neutral-50 flex items-start gap-4">
+              <i className="corner tl text-accent-700/20" />
+              <i className="corner tr text-accent-700/20" />
+              <i className="corner bl text-accent-700/20" />
+              <i className="corner br text-accent-700/20" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-divider bg-white text-accent-700">
+                <Globe className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="font-heading text-xs font-bold text-ink uppercase tracking-wide">Official Website</h4>
+                <p className="mt-1.5 text-sm text-ink/80 font-semibold">
+                  <a href={companyInfo.websiteUrl} target="_blank" rel="noopener noreferrer" className="hover:text-accent-700 transition-colors">
+                    {companyInfo.website}
+                  </a>
                 </p>
               </div>
             </div>

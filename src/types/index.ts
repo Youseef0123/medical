@@ -2,6 +2,8 @@ export type ProductCategory = "Neurology" | "Mental Health" | "Cardiology" | "Me
 export type ProductType = "Prescription" | "OTC";
 
 export interface Product {
+  id?: string | number;
+  documentId?: string;
   slug: string;
   name: string;
   ingredient: string;
@@ -10,6 +12,11 @@ export interface Product {
   type: ProductType;
   description: string;
   image?: string;
+  activeIngredient?: string;
+  strength?: string;
+  packSize?: string;
+  isActive?: boolean;
+  displayOrder?: number;
 }
 
 export interface Testimonial {
@@ -28,7 +35,7 @@ export interface FeatureCard {
   title: string;
   description: string;
   stat: string;
-  icon: "quality" | "innovation" | "safety" | "accessibility";
+  icon: "quality" | "trust" | "accessibility" | "integrity";
 }
 
 export interface Certification {
@@ -48,4 +55,33 @@ export interface StatCounter {
   target: number;
   suffix: string;
   format?: "thousand";
+}
+
+export type EventCategory = "all" | "celebrations" | "conferences" | "exhibitions" | "partnerships";
+
+export interface EventItem {
+  id: string;
+  title: string;
+  category: Exclude<EventCategory, "all">;
+  categoryLabel: string;
+  description: string;
+  date: string;
+  location?: string;
+  coverImage: string;
+  images: string[];
+}
+
+export type JobType = "Full-time" | "Part-time" | "Internship" | "Contract";
+
+export interface Job {
+  id: string;
+  slug: string;
+  title: string;
+  department: string;
+  location: string;
+  type: JobType;
+  postedDate: string;
+  description: string;
+  responsibilities: string[];
+  requirements: string[];
 }
