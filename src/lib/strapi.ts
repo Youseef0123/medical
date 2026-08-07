@@ -1,4 +1,3 @@
-import { jobs as fallbackJobs } from "@/data/jobs";
 import type { Job } from "@/types";
 
 export interface ContactFormData {
@@ -50,7 +49,7 @@ export function mapStrapiJob(raw: any): Job {
   };
 
   return {
-    id: String(raw.id || raw.documentId || item.id || item.documentId),
+    id: String(raw.documentId || raw.id || item.documentId || item.id),
     slug: item.slug || `job-${raw.id || raw.documentId}`,
     title: item.title || "Job Opening",
     department: item.department || "General",
@@ -99,8 +98,8 @@ export async function submitContactForm(payload: ContactFormData): Promise<Conta
 }
 
 /**
- * Fetches open job postings from Strapi API (GET /api/jobs?filters[isOpen][$eq]=true&populate=*).
- * Falls back to mock jobs data if server is offline or returns empty.
+ * Fetches open job postings directly from Strapi API (GET /api/jobs?filters[isOpen][$eq]=true&populate=*).
+ * Returns ONLY data from the backend (no mock fallback).
  */
 export async function fetchOpenJobs(): Promise<Job[]> {
   const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
@@ -112,20 +111,20 @@ export async function fetchOpenJobs(): Promise<Job[]> {
 
     if (!res.ok) {
       console.warn("Strapi fetchOpenJobs failed with status:", res.status);
-      return fallbackJobs;
+      return [];
     }
 
     const json = await res.json();
     const rawList = json.data;
 
-    if (Array.isArray(rawList) && rawList.length > 0) {
+    if (Array.isArray(rawList)) {
       return rawList.map(mapStrapiJob);
     }
 
-    return fallbackJobs;
+    return [];
   } catch (error) {
-    console.warn("Strapi fetchOpenJobs network error, falling back to mock data:", error);
-    return fallbackJobs;
+    console.warn("Strapi fetchOpenJobs network error:", error);
+    return [];
   }
 }
 

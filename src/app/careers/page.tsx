@@ -9,9 +9,9 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Tag } from "@/components/ui/Tag";
 import { ApplyModal } from "@/components/ui/ApplyModal";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 import { gsap } from "@/lib/gsap";
 import { fetchOpenJobs } from "@/lib/strapi";
-import { jobs as fallbackJobs } from "@/data/jobs";
 import type { Job, JobType } from "@/types";
 import {
   Award,
@@ -52,7 +52,8 @@ const TYPE_OPTIONS: { key: string; label: string }[] = [
 ];
 
 export default function CareersPage() {
-  const [jobList, setJobList] = useState<Job[]>(fallbackJobs);
+  const [jobList, setJobList] = useState<Job[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [selectedDept, setSelectedDept] = useState<string>("All Departments");
   const [selectedLoc, setSelectedLoc] = useState<string>("All Locations");
   const [selectedType, setSelectedType] = useState<string>("All");
@@ -64,28 +65,41 @@ export default function CareersPage() {
   const mainRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
-  // Fetch Live Open Jobs from Strapi on mount
+  // Fetch Live Open Jobs directly from Strapi on mount
   useEffect(() => {
     let isMounted = true;
-    fetchOpenJobs().then((fetched) => {
-      if (isMounted && fetched && fetched.length > 0) {
-        setJobList(fetched);
-      }
-    });
+    setIsLoading(true);
+    fetchOpenJobs()
+      .then((fetched) => {
+        if (isMounted) {
+          setJobList(fetched || []);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
+
     return () => {
       isMounted = false;
     };
   }, []);
 
-  // Filter Logic
+  // Filter Logic with jobList in dependencies
   const filteredJobs = useMemo(() => {
     return jobList.filter((j) => {
       const matchesDept =
-        selectedDept === "All Departments" || j.department === selectedDept;
+        selectedDept === "All Departments" ||
+        j.department.toLowerCase() === selectedDept.toLowerCase();
+
       const matchesLoc =
-        selectedLoc === "All Locations" || j.location === selectedLoc;
+        selectedLoc === "All Locations" ||
+        j.location.toLowerCase() === selectedLoc.toLowerCase();
+
       const matchesType =
-        selectedType === "All" || j.type === selectedType;
+        selectedType === "All" ||
+        j.type.toLowerCase() === selectedType.toLowerCase();
 
       const q = searchQuery.trim().toLowerCase();
       const matchesSearch =
@@ -96,7 +110,7 @@ export default function CareersPage() {
 
       return matchesDept && matchesLoc && matchesType && matchesSearch;
     });
-  }, [selectedDept, selectedLoc, selectedType, searchQuery]);
+  }, [jobList, selectedDept, selectedLoc, selectedType, searchQuery]);
 
   const hasActiveFilters =
     selectedDept !== "All Departments" ||
@@ -286,32 +300,22 @@ export default function CareersPage() {
 
                 {/* Department Select */}
                 <div className="md:col-span-3">
-                  <select
+                  <CustomSelect
+                    options={DEPARTMENT_OPTIONS}
                     value={selectedDept}
-                    onChange={(e) => setSelectedDept(e.target.value)}
-                    className="w-full rounded-full border border-divider bg-neutral-50 py-3 px-4 text-xs font-medium text-ink focus:border-brand-blue focus:bg-white focus:outline-none cursor-pointer"
-                  >
-                    {DEPARTMENT_OPTIONS.map((dept) => (
-                      <option key={dept} value={dept}>
-                        {dept}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={setSelectedDept}
+                    ariaLabel="Department filter"
+                  />
                 </div>
 
                 {/* Location Select */}
                 <div className="md:col-span-3">
-                  <select
+                  <CustomSelect
+                    options={LOCATION_OPTIONS}
                     value={selectedLoc}
-                    onChange={(e) => setSelectedLoc(e.target.value)}
-                    className="w-full rounded-full border border-divider bg-neutral-50 py-3 px-4 text-xs font-medium text-ink focus:border-brand-blue focus:bg-white focus:outline-none cursor-pointer"
-                  >
-                    {LOCATION_OPTIONS.map((loc) => (
-                      <option key={loc} value={loc}>
-                        {loc}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={setSelectedLoc}
+                    ariaLabel="Location filter"
+                  />
                 </div>
 
                 {/* Reset Filters */}
@@ -370,7 +374,16 @@ export default function CareersPage() {
         {/* ── 4. Jobs List Section ───────────────────────────────────── */}
         <section className="px-5 pb-24 sm:px-8">
           <div className="mx-auto max-w-[1200px]">
-            {filteredJobs.length > 0 ? (
+            {isLoading ? (
+              <div className="rounded-2xl border border-divider bg-white p-12 text-center shadow-sm">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-100 text-accent-700">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent-700 border-t-transparent" />
+                </div>
+                <h3 className="font-heading text-xl font-bold uppercase text-ink">
+                  Loading Positions from Medisave API...
+                </h3>
+              </div>
+            ) : filteredJobs.length > 0 ? (
               <div className="grid gap-6">
                 {filteredJobs.map((job) => (
                   <Card
@@ -425,7 +438,7 @@ export default function CareersPage() {
                   No Positions Found
                 </h3>
                 <p className="mx-auto mb-6 max-w-md text-sm text-ink/70">
-                  No open positions match your current search filters. Try adjusting your department, location, or reset the filters.
+                  No active job positions were found in the database.
                 </p>
                 <Button variant="primary" onClick={handleResetFilters}>
                   Reset All Filters
