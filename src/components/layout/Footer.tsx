@@ -56,42 +56,55 @@ export function Footer() {
             </p>
           </div>
 
-          <div className="md:px-10">
-            <h6 className="mb-5">Quick Links</h6>
-            <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-5 md:px-10">
+            <h3 className="font-heading text-base font-bold uppercase tracking-wider text-white pb-1">
+              Quick Links
+            </h3>
+            <div className="flex flex-col gap-3">
               {navLinks.map((link) => (
-                <a key={link.href} href={link.href} className="footer-link text-sm">
+                <a key={link.href} href={link.href} className="footer-link text-sm font-medium">
                   {link.label}
                 </a>
               ))}
             </div>
           </div>
 
-          <div className="md:px-10">
-            <h6 className="mb-5">Products</h6>
-            <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-5 md:px-10">
+            <h3 className="font-heading text-base font-bold uppercase tracking-wider text-white pb-1">
+              Products
+            </h3>
+            <div className="flex flex-col gap-3">
               {products.slice(0, 4).map((product) => (
-                <a key={product.slug} href="#products" className="footer-link text-sm">
+                <a key={product.slug} href="/products" className="footer-link text-sm font-medium">
                   {product.name}
                 </a>
               ))}
             </div>
           </div>
 
-          <div className="md:pl-10">
-            <h6 className="mb-5">Contact Us</h6>
-            <p className="mb-4 text-sm leading-relaxed text-white/75">
-              {companyInfo.address}
-              <br />
-              <br />
-              <a href={`mailto:${companyInfo.email}`} className="hover:text-accent transition-colors">
-                {companyInfo.email}
-              </a>
-              <br />
-              <a href={`tel:${companyInfo.phoneTel}`} className="hover:text-accent transition-colors">
-                {companyInfo.phoneDisplay}
-              </a>
-            </p>
+          <div className="flex flex-col gap-5 md:pl-10">
+            <h3 className="font-heading text-base font-bold uppercase tracking-wider text-white pb-1">
+              Contact Us
+            </h3>
+            <div className="space-y-3 text-sm text-white/80 leading-relaxed">
+              <p className="font-medium text-white/90">{companyInfo.address}</p>
+              <p>
+                <a
+                  href={`mailto:${companyInfo.email}`}
+                  className="hover:text-accent-300 transition-colors font-semibold"
+                >
+                  {companyInfo.email}
+                </a>
+              </p>
+              <p>
+                <a
+                  href={`tel:${companyInfo.phoneTel}`}
+                  className="hover:text-accent-300 transition-colors font-semibold"
+                >
+                  {companyInfo.phoneDisplay}
+                </a>
+              </p>
+            </div>
             <div className="flex gap-3">
               {socialLinks.map((social) => (
                 <a
