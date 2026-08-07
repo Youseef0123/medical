@@ -1,7 +1,13 @@
 import Image from "next/image";
 import { navLinks } from "@/data/navigation";
-import { products } from "@/data/products";
 import { companyInfo } from "@/data/company";
+
+const featuredProducts = [
+  { name: "Gincofar", href: "/products" },
+  { name: "Orgistrok", href: "/products" },
+  { name: "Cipramaline", href: "/products" },
+  { name: "Arilobe", href: "/products" },
+];
 
 const socialLinks = [
   {
@@ -74,8 +80,8 @@ export function Footer() {
               Products
             </h3>
             <div className="flex flex-col gap-3">
-              {products.slice(0, 4).map((product) => (
-                <a key={product.slug} href="/products" className="footer-link text-sm font-medium">
+              {featuredProducts.map((product) => (
+                <a key={product.name} href={product.href} className="footer-link text-sm font-medium">
                   {product.name}
                 </a>
               ))}
