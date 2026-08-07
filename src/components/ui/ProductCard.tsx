@@ -26,11 +26,13 @@ export function CategoryTag({ children }: { children: ReactNode }) {
 }
 
 export function ProductImage({ product }: { product: Product }) {
+  const imageSrc = product.image || `/images/products/${product.slug}.png`;
+
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-[#eef5fb] to-[#edf9f3]">
       <span className="brand-gradient absolute inset-x-0 top-0 z-10 h-1" aria-hidden />
       <ImageSlot
-        src={`/images/products/${product.slug}.svg`}
+        src={imageSrc}
         alt={`${product.name} packaging photo`}
         placeholderLabel={`${product.name} packaging photo`}
         className="aspect-4/3"

@@ -4,154 +4,100 @@ import { useLayoutEffect, useRef, useState, useEffect, useMemo } from "react";
 import { fetchProducts } from "@/lib/strapi";
 import { Button } from "@/components/ui/Button";
 import { ProductCard } from "@/components/ui/ProductCard";
-import { gsap, Flip } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
 import { useHoverCapable } from "@/lib/hooks/useHoverCapable";
 import type { Product } from "@/types";
 
+const CATEGORIES = ["All", "Neurology", "Mental Health", "Cardiology", "Metabolic"];
+
 export function Products() {
   const [productList, setProductList] = useState<Product[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("All");
-  const [leavingSlugs, setLeavingSlugs] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const sectionRef = useRef<HTMLElement>(null);
-  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-  const pendingFlipState = useRef<ReturnType<typeof Flip.getState> | null>(null);
-  const enteringSlugsRef = useRef<Set<string>>(new Set());
+  const gridRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
   const hoverCapable = useHoverCapable();
 
   // Fetch real products from Strapi on mount
   useEffect(() => {
     let isMounted = true;
-    fetchProducts().then((fetched) => {
-      if (isMounted) {
-        setProductList(fetched || []);
-      }
-    });
+    setIsLoading(true);
+    fetchProducts()
+      .then((fetched) => {
+        if (isMounted) {
+          setProductList(fetched || []);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const categories = useMemo(() => {
-    const set = new Set(productList.map((p) => p.category));
-    return ["All", ...Array.from(set)];
-  }, [productList]);
-
   const visibleProducts = useMemo(() => {
-    return activeCategory === "All"
-      ? productList
-      : productList.filter((p) => p.category === activeCategory);
+    if (activeCategory === "All") return productList;
+    return productList.filter(
+      (p) => p.category.toLowerCase() === activeCategory.toLowerCase()
+    );
   }, [productList, activeCategory]);
 
   // One-shot entrance: staggered fade-up as the grid scrolls into view.
-  // clearProps wipes the inline transforms afterwards so the GSAP Flip
-  // filter animation always measures clean layout positions.
   useLayoutEffect(() => {
-    if (prefersReducedMotion) return;
-    const els = Array.from(cardRefs.current.values());
-    if (!els.length) return;
+    if (prefersReducedMotion || !gridRef.current) return;
+    const cards = gridRef.current.querySelectorAll(".product-card-wrapper");
+    if (!cards.length) return;
 
     const ctx = gsap.context(() => {
-      gsap.from(els, {
-        opacity: 0,
-        y: 26,
-        duration: 0.6,
-        ease: "power2.out",
-        stagger: 0.07,
-        clearProps: "opacity,transform",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 78%",
-          once: true,
-        },
-      });
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 26 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          stagger: 0.07,
+          clearProps: "all",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 78%",
+            once: true,
+          },
+        }
+      );
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [prefersReducedMotion]);
+  }, [prefersReducedMotion, isLoading]);
 
-  // Runs after a filter change has committed to the DOM: replays the
-  // captured Flip state so staying/incoming cards slide into their new
-  // grid positions instead of snapping.
-  useLayoutEffect(() => {
-    const state = pendingFlipState.current;
-    if (!state) return;
-    pendingFlipState.current = null;
+  const handleFilterChange = (next: string) => {
+    if (next === activeCategory) return;
+    setActiveCategory(next);
 
-    const enteringEls = Array.from(enteringSlugsRef.current)
-      .map((slug) => cardRefs.current.get(slug))
-      .filter((el): el is HTMLDivElement => !!el);
-    enteringSlugsRef.current = new Set();
-
-    if (enteringEls.length) gsap.set(enteringEls, { opacity: 0, scale: 0.92 });
-
-    Flip.from(state, {
-      duration: 0.5,
-      ease: "power2.inOut",
-      stagger: 0.03,
-      absolute: true,
-      onComplete: () => {
-        if (enteringEls.length) {
-          gsap.to(enteringEls, {
+    if (gridRef.current && !prefersReducedMotion) {
+      const cards = gridRef.current.querySelectorAll(".product-card-wrapper");
+      if (cards.length > 0) {
+        gsap.fromTo(
+          cards,
+          { opacity: 0, scale: 0.96 },
+          {
             opacity: 1,
             scale: 1,
             duration: 0.35,
+            stagger: 0.04,
             ease: "power2.out",
-            stagger: 0.03,
-          });
-        }
-      },
-    });
-  }, [activeCategory]);
-
-  function handleFilterChange(next: string) {
-    if (next === activeCategory) return;
-
-    if (prefersReducedMotion) {
-      setActiveCategory(next);
-      return;
+            clearProps: "all",
+          }
+        );
+      }
     }
-
-    const visibleEls = Array.from(cardRefs.current.values());
-    const state = Flip.getState(visibleEls);
-
-    const getFiltered = (cat: string) =>
-      cat === "All" ? productList : productList.filter((p) => p.category === cat);
-
-    const currentSlugs = new Set(getFiltered(activeCategory).map((p) => p.slug));
-    const nextSlugs = new Set(getFiltered(next).map((p) => p.slug));
-    const leaving = [...currentSlugs].filter((slug) => !nextSlugs.has(slug));
-    const entering = [...nextSlugs].filter((slug) => !currentSlugs.has(slug));
-
-    enteringSlugsRef.current = new Set(entering);
-
-    // Nothing to animate out — jump straight to capturing state for the
-    // upcoming layout effect to replay via Flip.
-    if (leaving.length === 0) {
-      pendingFlipState.current = state;
-      setActiveCategory(next);
-      return;
-    }
-
-    setLeavingSlugs(new Set(leaving));
-    const leavingEls = leaving
-      .map((slug) => cardRefs.current.get(slug))
-      .filter((el): el is HTMLDivElement => !!el);
-
-    gsap.to(leavingEls, {
-      opacity: 0,
-      scale: 0.92,
-      duration: 0.25,
-      stagger: 0.03,
-      ease: "power1.in",
-      onComplete: () => {
-        pendingFlipState.current = state;
-        setActiveCategory(next);
-        setLeavingSlugs(new Set());
-      },
-    });
-  }
+  };
 
   return (
     <section ref={sectionRef} id="products" className="bg-neutral-100 px-5 py-22 sm:px-8">
@@ -166,9 +112,10 @@ export function Products() {
           <span className="brand-gradient mx-auto mt-4 block h-1 w-16 rounded-full" />
         </div>
 
+        {/* Categories Tab Bar */}
         <div className="mb-10 flex justify-center">
           <div className="seg flex-wrap">
-            {categories.map((category) => (
+            {CATEGORIES.map((category) => (
               <button
                 key={category}
                 type="button"
@@ -182,25 +129,49 @@ export function Products() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
-          {visibleProducts.map((product) => (
-            <ProductCard
-              key={product.slug}
-              product={product}
-              hoverCapable={hoverCapable}
-              prefersReducedMotion={prefersReducedMotion}
-              hidden={leavingSlugs.has(product.slug)}
-              registerRef={(el) => {
-                if (el) cardRefs.current.set(product.slug, el);
-                else cardRefs.current.delete(product.slug);
-              }}
-            />
-          ))}
-        </div>
+        {/* Products Grid or States */}
+        {isLoading ? (
+          <div className="rounded-2xl border border-divider bg-white p-12 text-center shadow-sm">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-100 text-accent-700">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent-700 border-t-transparent" />
+            </div>
+            <h3 className="font-heading text-xl font-bold uppercase text-ink">
+              Loading Products Catalog...
+            </h3>
+          </div>
+        ) : visibleProducts.length > 0 ? (
+          <div
+            ref={gridRef}
+            className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {visibleProducts.map((product) => (
+              <div key={product.slug} className="product-card-wrapper">
+                <ProductCard
+                  product={product}
+                  hoverCapable={hoverCapable}
+                  prefersReducedMotion={prefersReducedMotion}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          /* Empty State for category with no products */
+          <div className="rounded-2xl border border-divider bg-white p-12 text-center shadow-sm">
+            <h3 className="mb-2 font-heading text-xl font-bold uppercase text-ink">
+              No Products Available
+            </h3>
+            <p className="mx-auto mb-6 max-w-md text-sm text-ink/70">
+              There are currently no products available under the &ldquo;{activeCategory}&rdquo; category.
+            </p>
+            <Button variant="secondary" onClick={() => handleFilterChange("All")}>
+              View All Products
+            </Button>
+          </div>
+        )}
 
         <div className="mt-11 text-center">
           <Button variant="secondary" onClick={() => (window.location.href = "/products")}>
-            View All Products
+            View All Products Catalog
           </Button>
         </div>
       </div>
