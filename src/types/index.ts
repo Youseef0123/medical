@@ -2,6 +2,8 @@ export type ProductCategory = "Neurology" | "Mental Health" | "Cardiology" | "Me
 export type ProductType = "Prescription" | "OTC";
 
 export interface Product {
+  id?: string | number;
+  documentId?: string;
   slug: string;
   name: string;
   ingredient: string;
@@ -10,6 +12,11 @@ export interface Product {
   type: ProductType;
   description: string;
   image?: string;
+  activeIngredient?: string;
+  strength?: string;
+  packSize?: string;
+  isActive?: boolean;
+  displayOrder?: number;
 }
 
 export interface Testimonial {

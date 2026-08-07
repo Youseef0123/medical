@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useLayoutEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
@@ -9,8 +9,8 @@ import { ProductCard } from "@/components/ui/ProductCard";
 import { Button } from "@/components/ui/Button";
 import { Tag } from "@/components/ui/Tag";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { products } from "@/data/products";
-import type { ProductCategory, ProductType } from "@/types";
+import { fetchProducts } from "@/lib/strapi";
+import type { Product, ProductCategory, ProductType } from "@/types";
 import {
   ChevronRight,
   FilterX,
@@ -35,6 +35,8 @@ const TYPE_OPTIONS: { key: string; label: string }[] = [
 ];
 
 export default function ProductsPage() {
+  const [productList, setProductList] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [selectedType, setSelectedType] = useState<string>("All");
@@ -43,16 +45,36 @@ export default function ProductsPage() {
   const heroRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
+  // Fetch Live Products directly from Strapi
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+    fetchProducts()
+      .then((fetched) => {
+        if (isMounted) {
+          setProductList(fetched || []);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Combined Filtering Logic
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+    return productList.filter((product) => {
       // Category Filter
       const matchesCategory =
-        selectedCategory === "All" || product.category === selectedCategory;
+        selectedCategory === "All" || product.category.toLowerCase() === selectedCategory.toLowerCase();
 
       // Type Filter
       const matchesType =
-        selectedType === "All" || product.type === selectedType;
+        selectedType === "All" || product.type.toLowerCase() === selectedType.toLowerCase();
 
       // Search Query Filter (Matches Name or Active Ingredient)
       const q = searchQuery.trim().toLowerCase();
@@ -64,7 +86,7 @@ export default function ProductsPage() {
 
       return matchesCategory && matchesType && matchesSearch;
     });
-  }, [searchQuery, selectedCategory, selectedType]);
+  }, [productList, searchQuery, selectedCategory, selectedType]);
 
   const hasActiveFilters =
     searchQuery !== "" || selectedCategory !== "All" || selectedType !== "All";
@@ -292,7 +314,7 @@ export default function ProductsPage() {
                   <span className="text-accent-700 font-bold">
                     {filteredProducts.length}
                   </span>{" "}
-                  of {products.length} products
+                  of {productList.length} products
                 </div>
               </div>
             </div>
@@ -302,7 +324,16 @@ export default function ProductsPage() {
         {/* ── 3. Products Grid Section ─────────────────────────────── */}
         <section className="px-5 pb-24 sm:px-8">
           <div className="mx-auto max-w-[1200px]">
-            {filteredProducts.length > 0 ? (
+            {isLoading ? (
+              <div className="rounded-2xl border border-divider bg-white p-12 text-center shadow-sm">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-100 text-accent-700">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-accent-700 border-t-transparent" />
+                </div>
+                <h3 className="font-heading text-xl font-bold uppercase text-ink">
+                  Loading Products Catalog...
+                </h3>
+              </div>
+            ) : filteredProducts.length > 0 ? (
               <div
                 ref={gridRef}
                 className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"

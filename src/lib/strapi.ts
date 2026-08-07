@@ -1,4 +1,4 @@
-import type { Job } from "@/types";
+import type { Job, Product } from "@/types";
 
 export interface ContactFormData {
   fullName: string;
@@ -157,5 +157,73 @@ export async function submitJobApplication(formData: FormData): Promise<JobAppli
       message: "Unable to connect to server. Please check your internet connection or try again later.",
       errors: { network: error?.message || "Network error" },
     };
+  }
+}
+
+/** Helper function to map Strapi product entry to frontend Product interface */
+export function mapStrapiProduct(raw: any): Product {
+  const item = raw.attributes || raw;
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
+
+  let imageUrl: string | undefined = undefined;
+  const imgData = item.image?.data?.attributes || item.image?.data || item.image;
+  if (imgData?.url) {
+    imageUrl = imgData.url.startsWith("http") ? imgData.url : `${baseUrl}${imgData.url}`;
+  } else if (typeof item.image === "string") {
+    imageUrl = item.image.startsWith("http") || item.image.startsWith("/") ? item.image : `${baseUrl}${item.image}`;
+  }
+
+  const activeIngredient = item.activeIngredient || item.ingredient || "";
+  const strength = item.strength || "";
+  const packSize = item.packSize || "";
+  const dosage = item.dosage || (strength && packSize ? `${strength} — ${packSize}` : strength || packSize || "");
+
+  return {
+    id: raw.id || raw.documentId,
+    documentId: raw.documentId,
+    slug: item.slug || `product-${raw.id || raw.documentId}`,
+    name: item.name || "Pharmaceutical Product",
+    ingredient: activeIngredient,
+    activeIngredient,
+    strength,
+    packSize,
+    dosage,
+    category: item.category || "Neurology",
+    type: item.type || "Prescription",
+    description: item.shortDescription || item.description || "",
+    image: imageUrl,
+    isActive: item.isActive ?? true,
+    displayOrder: item.displayOrder ?? 0,
+  };
+}
+
+/**
+ * Fetches active products directly from Strapi API (GET /api/products?filters[isActive][$eq]=true&populate=*&sort=displayOrder:asc).
+ */
+export async function fetchProducts(): Promise<Product[]> {
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
+
+  try {
+    const res = await fetch(
+      `${baseUrl}/api/products?filters[isActive][$eq]=true&populate=*&sort=displayOrder:asc`,
+      { cache: "no-store" }
+    );
+
+    if (!res.ok) {
+      console.warn("Strapi fetchProducts failed with status:", res.status);
+      return [];
+    }
+
+    const json = await res.json();
+    const rawList = json.data;
+
+    if (Array.isArray(rawList)) {
+      return rawList.map(mapStrapiProduct);
+    }
+
+    return [];
+  } catch (error) {
+    console.warn("Strapi fetchProducts network error:", error);
+    return [];
   }
 }

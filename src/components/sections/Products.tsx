@@ -1,7 +1,7 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
-import { products } from "@/data/products";
+import { useLayoutEffect, useRef, useState, useEffect, useMemo } from "react";
+import { fetchProducts } from "@/lib/strapi";
 import { Button } from "@/components/ui/Button";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { gsap, Flip } from "@/lib/gsap";
@@ -9,13 +9,8 @@ import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
 import { useHoverCapable } from "@/lib/hooks/useHoverCapable";
 import type { Product } from "@/types";
 
-const CATEGORIES = ["All", ...Array.from(new Set(products.map((p) => p.category)))];
-
-function filterByCategory(category: string): Product[] {
-  return category === "All" ? products : products.filter((p) => p.category === category);
-}
-
 export function Products() {
+  const [productList, setProductList] = useState<Product[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [leavingSlugs, setLeavingSlugs] = useState<Set<string>>(new Set());
   const sectionRef = useRef<HTMLElement>(null);
@@ -24,6 +19,30 @@ export function Products() {
   const enteringSlugsRef = useRef<Set<string>>(new Set());
   const prefersReducedMotion = usePrefersReducedMotion();
   const hoverCapable = useHoverCapable();
+
+  // Fetch real products from Strapi on mount
+  useEffect(() => {
+    let isMounted = true;
+    fetchProducts().then((fetched) => {
+      if (isMounted) {
+        setProductList(fetched || []);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const categories = useMemo(() => {
+    const set = new Set(productList.map((p) => p.category));
+    return ["All", ...Array.from(set)];
+  }, [productList]);
+
+  const visibleProducts = useMemo(() => {
+    return activeCategory === "All"
+      ? productList
+      : productList.filter((p) => p.category === activeCategory);
+  }, [productList, activeCategory]);
 
   // One-shot entrance: staggered fade-up as the grid scrolls into view.
   // clearProps wipes the inline transforms afterwards so the GSAP Flip
@@ -97,8 +116,11 @@ export function Products() {
     const visibleEls = Array.from(cardRefs.current.values());
     const state = Flip.getState(visibleEls);
 
-    const currentSlugs = new Set(filterByCategory(activeCategory).map((p) => p.slug));
-    const nextSlugs = new Set(filterByCategory(next).map((p) => p.slug));
+    const getFiltered = (cat: string) =>
+      cat === "All" ? productList : productList.filter((p) => p.category === cat);
+
+    const currentSlugs = new Set(getFiltered(activeCategory).map((p) => p.slug));
+    const nextSlugs = new Set(getFiltered(next).map((p) => p.slug));
     const leaving = [...currentSlugs].filter((slug) => !nextSlugs.has(slug));
     const entering = [...nextSlugs].filter((slug) => !currentSlugs.has(slug));
 
@@ -131,8 +153,6 @@ export function Products() {
     });
   }
 
-  const visibleProducts = filterByCategory(activeCategory);
-
   return (
     <section ref={sectionRef} id="products" className="bg-neutral-100 px-5 py-22 sm:px-8">
       <div className="mx-auto max-w-[1200px]">
@@ -148,7 +168,7 @@ export function Products() {
 
         <div className="mb-10 flex justify-center">
           <div className="seg flex-wrap">
-            {CATEGORIES.map((category) => (
+            {categories.map((category) => (
               <button
                 key={category}
                 type="button"
