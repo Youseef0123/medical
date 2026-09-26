@@ -12,7 +12,7 @@ import { ApplyModal } from "@/components/ui/ApplyModal";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { gsap } from "@/lib/gsap";
 import { fetchOpenJobs } from "@/lib/strapi";
-import type { Job, JobType } from "@/types";
+import type { Job } from "@/types";
 import {
   Award,
   Briefcase,
@@ -23,7 +23,6 @@ import {
   Home,
   MapPin,
   Search,
-  Sparkles,
   Users,
 } from "lucide-react";
 

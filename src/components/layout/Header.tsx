@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { CtaButton } from "@/components/ui/CtaButton";
 import { navLinks } from "@/data/navigation";
 import { useScrollPosition } from "@/lib/hooks/useScrollPosition";
@@ -27,7 +28,7 @@ export function Header() {
           mobileOpen && "!rounded-none !bg-transparent !border-none !shadow-none"
         )}
       >
-        <a
+        <Link
           href="/"
           className="mr-auto flex items-center transition-all duration-700 ease-out"
         >
@@ -42,7 +43,7 @@ export function Header() {
             className="h-8 w-auto object-contain transition-transform duration-500 hover:scale-105"
             priority
           />
-        </a>
+        </Link>
 
         <div className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (

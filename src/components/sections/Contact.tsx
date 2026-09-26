@@ -4,11 +4,9 @@ import { useState, useLayoutEffect, useRef } from "react";
 import { MapPin, Mail, Phone, CheckCircle, Globe } from "lucide-react";
 import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/cn";
-import { gsap } from "@/lib/gsap";
 import { companyInfo } from "@/data/company";
 
 import { submitContactForm } from "@/lib/strapi";
-import { Loader2, XCircle } from "lucide-react";
 
 export function Contact() {
   const [formData, setFormData] = useState({

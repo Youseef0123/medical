@@ -28,15 +28,16 @@ export interface ContactFormResponse {
 export interface JobApplicationResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data?: unknown;
   errors?: Record<string, string>;
 }
 
 /** Helper function to map Strapi job entry to frontend Job interface */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw Strapi payload shape varies (v4 attributes vs v5 flat)
 export function mapStrapiJob(raw: any): Job {
   const item = raw.attributes || raw;
 
-  const mapList = (list: any): string[] => {
+  const mapList = (list: unknown): string[] => {
     if (!list) return [];
     if (Array.isArray(list)) {
       return list.map((entry) => {
@@ -88,11 +89,11 @@ export async function submitContactForm(payload: ContactFormData): Promise<Conta
     }
 
     return data;
-  } catch (error: any) {
+  } catch (error) {
     return {
       success: false,
       message: "Unable to connect to server. Please check your internet connection or try again later.",
-      errors: { network: error?.message || "Network error" },
+      errors: { network: error instanceof Error ? error.message : "Network error" },
     };
   }
 }
@@ -151,16 +152,17 @@ export async function submitJobApplication(formData: FormData): Promise<JobAppli
     }
 
     return data;
-  } catch (error: any) {
+  } catch (error) {
     return {
       success: false,
       message: "Unable to connect to server. Please check your internet connection or try again later.",
-      errors: { network: error?.message || "Network error" },
+      errors: { network: error instanceof Error ? error.message : "Network error" },
     };
   }
 }
 
 /** Helper function to map Strapi product entry to frontend Product interface */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw Strapi payload shape varies (v4 attributes vs v5 flat)
 export function mapStrapiProduct(raw: any): Product {
   const item = raw.attributes || raw;
   const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";

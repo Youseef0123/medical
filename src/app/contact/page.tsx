@@ -8,16 +8,13 @@ import { Footer } from "@/components/layout/Footer";
 import { Card } from "@/components/ui/Card";
 import { CtaButton } from "@/components/ui/CtaButton";
 import { Tag } from "@/components/ui/Tag";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 import { companyInfo } from "@/data/company";
 import {
   Building2,
-  Calendar,
   CheckCircle2,
   ChevronRight,
   Clock,
-  Globe,
-  HeartPulse,
   Home,
   Loader2,
   Mail,

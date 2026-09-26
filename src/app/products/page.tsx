@@ -8,9 +8,9 @@ import { Footer } from "@/components/layout/Footer";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { Button } from "@/components/ui/Button";
 import { Tag } from "@/components/ui/Tag";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 import { fetchProducts } from "@/lib/strapi";
-import type { Product, ProductCategory, ProductType } from "@/types";
+import type { Product } from "@/types";
 import {
   ChevronRight,
   FilterX,

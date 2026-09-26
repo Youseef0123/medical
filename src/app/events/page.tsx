@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Card } from "@/components/ui/Card";
-import { CtaButton } from "@/components/ui/CtaButton";
 import { Tag } from "@/components/ui/Tag";
 import { gsap } from "@/lib/gsap";
 import { eventsData, allGalleryPhotos, type GalleryPhoto } from "@/data/events";
@@ -18,7 +17,6 @@ import {
   Home,
   MapPin,
   Maximize2,
-  Sparkles,
   X,
   Tag as TagIcon,
 } from "lucide-react";
