@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useLayoutEffect, useRef } from "react";
-import { MapPin, Mail, Phone, CheckCircle, Globe } from "lucide-react";
+import { MapPin, Mail, Phone, CheckCircle } from "lucide-react";
 import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/cn";
 import { companyInfo } from "@/data/company";
@@ -133,25 +133,6 @@ export function Contact() {
                 <p className="mt-1.5 text-sm text-ink/80 font-semibold">
                   <a href={`tel:${companyInfo.phoneTel}`} className="hover:text-accent-700 transition-colors">
                     {companyInfo.phoneDisplay}
-                  </a>
-                </p>
-              </div>
-            </div>
-
-            {/* Website */}
-            <div className="blueprint relative p-5 bg-neutral-50 flex items-start gap-4">
-              <i className="corner tl text-accent-700/20" />
-              <i className="corner tr text-accent-700/20" />
-              <i className="corner bl text-accent-700/20" />
-              <i className="corner br text-accent-700/20" />
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-divider bg-white text-accent-700">
-                <Globe className="h-5 w-5" />
-              </div>
-              <div>
-                <h4 className="font-heading text-xs font-bold text-ink uppercase tracking-wide">Official Website</h4>
-                <p className="mt-1.5 text-sm text-ink/80 font-semibold">
-                  <a href={companyInfo.websiteUrl} target="_blank" rel="noopener noreferrer" className="hover:text-accent-700 transition-colors">
-                    {companyInfo.website}
                   </a>
                 </p>
               </div>

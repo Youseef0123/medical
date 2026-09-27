@@ -2,13 +2,6 @@ import Image from "next/image";
 import { navLinks } from "@/data/navigation";
 import { companyInfo } from "@/data/company";
 
-const featuredProducts = [
-  { name: "Gincofar", href: "/products" },
-  { name: "Orgistrok", href: "/products" },
-  { name: "Cipramaline", href: "/products" },
-  { name: "Arilobe", href: "/products" },
-];
-
 const socialLinks = [
   {
     label: "Facebook",
@@ -44,7 +37,7 @@ export function Footer() {
       <i className="corner tr !text-white/40" aria-hidden />
 
       <div className="mx-auto max-w-[1200px]">
-        <div className="grid grid-cols-1 gap-10 pb-10 sm:grid-cols-2 md:divide-x md:divide-white/12 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-10 pb-10 sm:grid-cols-2 md:divide-x md:divide-white/12 lg:grid-cols-3">
           <div className="md:pr-10">
             {/* Dark-surface variant of the official logo (white wordmark,
                 gradient "m", transparent background). */}
@@ -70,19 +63,6 @@ export function Footer() {
               {navLinks.map((link) => (
                 <a key={link.href} href={link.href} className="footer-link text-sm font-medium">
                   {link.label}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-5 md:px-10">
-            <h3 className="font-heading text-base font-bold uppercase tracking-wider text-white pb-1">
-              Products
-            </h3>
-            <div className="flex flex-col gap-3">
-              {featuredProducts.map((product) => (
-                <a key={product.name} href={product.href} className="footer-link text-sm font-medium">
-                  {product.name}
                 </a>
               ))}
             </div>

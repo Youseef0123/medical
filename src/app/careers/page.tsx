@@ -26,36 +26,24 @@ import {
   Users,
 } from "lucide-react";
 
-const DEPARTMENT_OPTIONS = [
-  "All Departments",
-  "Sales & Marketing",
-  "Quality Assurance",
-  "Regulatory Affairs",
-  "Research & Development",
-  "Medical & Clinical Affairs",
-];
+const ALL_DEPARTMENTS = "All Departments";
+const ALL_TYPES = "All";
 
-const LOCATION_OPTIONS = [
-  "All Locations",
-  "Cairo, Egypt",
-  "Giza, Egypt",
-  "10th of Ramadan, Egypt",
-];
-
-const TYPE_OPTIONS: { key: string; label: string }[] = [
-  { key: "All", label: "All Types" },
-  { key: "Full-time", label: "Full-time" },
-  { key: "Part-time", label: "Part-time" },
-  { key: "Contract", label: "Contract" },
-  { key: "Internship", label: "Internship" },
-];
+/** Unique, non-empty values of a job field (case-insensitive), in first-seen order. */
+function uniqueValues(jobs: Job[], pick: (job: Job) => string): string[] {
+  const seen = new Map<string, string>();
+  for (const job of jobs) {
+    const value = pick(job)?.trim();
+    if (value && !seen.has(value.toLowerCase())) seen.set(value.toLowerCase(), value);
+  }
+  return [...seen.values()];
+}
 
 export default function CareersPage() {
   const [jobList, setJobList] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [selectedDept, setSelectedDept] = useState<string>("All Departments");
-  const [selectedLoc, setSelectedLoc] = useState<string>("All Locations");
-  const [selectedType, setSelectedType] = useState<string>("All");
+  const [selectedDept, setSelectedDept] = useState<string>(ALL_DEPARTMENTS);
+  const [selectedType, setSelectedType] = useState<string>(ALL_TYPES);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [activeJob, setActiveJob] = useState<Job | null>(null);
@@ -85,20 +73,30 @@ export default function CareersPage() {
     };
   }, []);
 
+  // Filter options are derived from the jobs returned by the backend
+  const departmentOptions = useMemo(
+    () => [ALL_DEPARTMENTS, ...uniqueValues(jobList, (j) => j.department)],
+    [jobList]
+  );
+
+  const typeOptions = useMemo(
+    () => [
+      { key: ALL_TYPES, label: "All Types" },
+      ...uniqueValues(jobList, (j) => j.type).map((t) => ({ key: t, label: t })),
+    ],
+    [jobList]
+  );
+
   // Filter Logic with jobList in dependencies
   const filteredJobs = useMemo(() => {
     return jobList.filter((j) => {
       const matchesDept =
-        selectedDept === "All Departments" ||
-        j.department.toLowerCase() === selectedDept.toLowerCase();
-
-      const matchesLoc =
-        selectedLoc === "All Locations" ||
-        j.location.toLowerCase() === selectedLoc.toLowerCase();
+        selectedDept === ALL_DEPARTMENTS ||
+        j.department.trim().toLowerCase() === selectedDept.toLowerCase();
 
       const matchesType =
-        selectedType === "All" ||
-        j.type.toLowerCase() === selectedType.toLowerCase();
+        selectedType === ALL_TYPES ||
+        j.type.trim().toLowerCase() === selectedType.toLowerCase();
 
       const q = searchQuery.trim().toLowerCase();
       const matchesSearch =
@@ -107,20 +105,18 @@ export default function CareersPage() {
         j.department.toLowerCase().includes(q) ||
         j.description.toLowerCase().includes(q);
 
-      return matchesDept && matchesLoc && matchesType && matchesSearch;
+      return matchesDept && matchesType && matchesSearch;
     });
-  }, [jobList, selectedDept, selectedLoc, selectedType, searchQuery]);
+  }, [jobList, selectedDept, selectedType, searchQuery]);
 
   const hasActiveFilters =
-    selectedDept !== "All Departments" ||
-    selectedLoc !== "All Locations" ||
-    selectedType !== "All" ||
+    selectedDept !== ALL_DEPARTMENTS ||
+    selectedType !== ALL_TYPES ||
     searchQuery !== "";
 
   const handleResetFilters = () => {
-    setSelectedDept("All Departments");
-    setSelectedLoc("All Locations");
-    setSelectedType("All");
+    setSelectedDept(ALL_DEPARTMENTS);
+    setSelectedType(ALL_TYPES);
     setSearchQuery("");
   };
 
@@ -284,7 +280,7 @@ export default function CareersPage() {
             <div className="rounded-2xl border border-divider bg-white p-6 shadow-sm md:p-8">
               <div className="grid gap-4 md:grid-cols-12 items-center">
                 {/* Search Bar Input */}
-                <div className="md:col-span-4 relative">
+                <div className="md:col-span-5 relative">
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40" />
                     <input
@@ -298,22 +294,12 @@ export default function CareersPage() {
                 </div>
 
                 {/* Department Select */}
-                <div className="md:col-span-3">
+                <div className="md:col-span-5">
                   <CustomSelect
-                    options={DEPARTMENT_OPTIONS}
+                    options={departmentOptions}
                     value={selectedDept}
                     onChange={setSelectedDept}
                     ariaLabel="Department filter"
-                  />
-                </div>
-
-                {/* Location Select */}
-                <div className="md:col-span-3">
-                  <CustomSelect
-                    options={LOCATION_OPTIONS}
-                    value={selectedLoc}
-                    onChange={setSelectedLoc}
-                    ariaLabel="Location filter"
                   />
                 </div>
 
@@ -343,7 +329,7 @@ export default function CareersPage() {
                     Job Type:
                   </span>
                   <div className="seg flex-wrap">
-                    {TYPE_OPTIONS.map((t) => (
+                    {typeOptions.map((t) => (
                       <button
                         key={t.key}
                         type="button"
