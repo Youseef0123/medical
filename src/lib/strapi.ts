@@ -32,6 +32,12 @@ export interface JobApplicationResponse {
   errors?: Record<string, string>;
 }
 
+/**
+ * Strapi base URL. NEXT_PUBLIC_* values are inlined at build time, so the env
+ * var must be available during the build (not only at runtime).
+ */
+export const STRAPI_URL = (process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337").replace(/\/+$/, "");
+
 /** Helper function to map Strapi job entry to frontend Job interface */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw Strapi payload shape varies (v4 attributes vs v5 flat)
 export function mapStrapiJob(raw: any): Job {
@@ -67,10 +73,8 @@ export function mapStrapiJob(raw: any): Job {
  * Submits contact inquiry form data to Strapi backend API (POST /api/contact-uses).
  */
 export async function submitContactForm(payload: ContactFormData): Promise<ContactFormResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
-
   try {
-    const res = await fetch(`${baseUrl}/api/contact-uses`, {
+    const res = await fetch(`${STRAPI_URL}/api/contact-uses`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -103,10 +107,8 @@ export async function submitContactForm(payload: ContactFormData): Promise<Conta
  * Returns ONLY data from the backend (no mock fallback).
  */
 export async function fetchOpenJobs(): Promise<Job[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
-
   try {
-    const res = await fetch(`${baseUrl}/api/jobs?filters[isOpen][$eq]=true&populate=*`, {
+    const res = await fetch(`${STRAPI_URL}/api/jobs?filters[isOpen][$eq]=true&populate=*`, {
       cache: "no-store",
     });
 
@@ -133,10 +135,8 @@ export async function fetchOpenJobs(): Promise<Job[]> {
  * Submits a job application with CV file attachment to Strapi backend API (POST /api/job-applications).
  */
 export async function submitJobApplication(formData: FormData): Promise<JobApplicationResponse> {
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
-
   try {
-    const res = await fetch(`${baseUrl}/api/job-applications`, {
+    const res = await fetch(`${STRAPI_URL}/api/job-applications`, {
       method: "POST",
       body: formData, // Browser sets multipart boundary automatically
     });
@@ -165,14 +165,13 @@ export async function submitJobApplication(formData: FormData): Promise<JobAppli
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw Strapi payload shape varies (v4 attributes vs v5 flat)
 export function mapStrapiProduct(raw: any): Product {
   const item = raw.attributes || raw;
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
 
   let imageUrl: string | undefined = undefined;
   const imgData = item.image?.data?.attributes || item.image?.data || item.image;
   if (imgData?.url) {
-    imageUrl = imgData.url.startsWith("http") ? imgData.url : `${baseUrl}${imgData.url}`;
+    imageUrl = imgData.url.startsWith("http") ? imgData.url : `${STRAPI_URL}${imgData.url}`;
   } else if (typeof item.image === "string") {
-    imageUrl = item.image.startsWith("http") || item.image.startsWith("/") ? item.image : `${baseUrl}${item.image}`;
+    imageUrl = item.image.startsWith("http") || item.image.startsWith("/") ? item.image : `${STRAPI_URL}${item.image}`;
   }
 
   const activeIngredient = item.activeIngredient || item.ingredient || "";
@@ -203,11 +202,9 @@ export function mapStrapiProduct(raw: any): Product {
  * Fetches active products directly from Strapi API (GET /api/products?filters[isActive][$eq]=true&populate=*&sort=displayOrder:asc).
  */
 export async function fetchProducts(): Promise<Product[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337";
-
   try {
     const res = await fetch(
-      `${baseUrl}/api/products?filters[isActive][$eq]=true&populate=*&sort=displayOrder:asc`,
+      `${STRAPI_URL}/api/products?filters[isActive][$eq]=true&populate=*&sort=displayOrder:asc`,
       { cache: "no-store" }
     );
 
