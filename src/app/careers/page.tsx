@@ -12,6 +12,7 @@ import { ApplyModal } from "@/components/ui/ApplyModal";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { gsap } from "@/lib/gsap";
 import { fetchOpenJobs } from "@/lib/strapi";
+import { uniqueValues } from "@/lib/uniqueValues";
 import type { Job } from "@/types";
 import {
   Award,
@@ -28,16 +29,6 @@ import {
 
 const ALL_DEPARTMENTS = "All Departments";
 const ALL_TYPES = "All";
-
-/** Unique, non-empty values of a job field (case-insensitive), in first-seen order. */
-function uniqueValues(jobs: Job[], pick: (job: Job) => string): string[] {
-  const seen = new Map<string, string>();
-  for (const job of jobs) {
-    const value = pick(job)?.trim();
-    if (value && !seen.has(value.toLowerCase())) seen.set(value.toLowerCase(), value);
-  }
-  return [...seen.values()];
-}
 
 export default function CareersPage() {
   const [jobList, setJobList] = useState<Job[]>([]);

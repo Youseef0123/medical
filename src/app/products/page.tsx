@@ -10,36 +10,23 @@ import { Button } from "@/components/ui/Button";
 import { Tag } from "@/components/ui/Tag";
 import { gsap } from "@/lib/gsap";
 import { fetchProducts } from "@/lib/strapi";
+import { uniqueValues } from "@/lib/uniqueValues";
 import type { Product } from "@/types";
 import {
   ChevronRight,
   FilterX,
   Home,
-  Pill,
   Search,
   X,
 } from "lucide-react";
 
-const CATEGORY_OPTIONS: { key: string; label: string }[] = [
-  { key: "All", label: "All Categories" },
-  { key: "Neurology", label: "Neurology" },
-  { key: "Mental Health", label: "Mental Health" },
-  { key: "Cardiology", label: "Cardiology" },
-  { key: "Metabolic", label: "Metabolic" },
-];
-
-const TYPE_OPTIONS: { key: string; label: string }[] = [
-  { key: "All", label: "All Types" },
-  { key: "Prescription", label: "Prescription (Rx)" },
-  { key: "OTC", label: "OTC (Over-The-Counter)" },
-];
+const ALL_CATEGORIES = "All";
 
 export default function ProductsPage() {
   const [productList, setProductList] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [selectedType, setSelectedType] = useState<string>("All");
+  const [selectedCategory, setSelectedCategory] = useState<string>(ALL_CATEGORIES);
 
   const mainRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -65,16 +52,22 @@ export default function ProductsPage() {
     };
   }, []);
 
+  // Category options are derived from the products returned by the backend
+  const categoryOptions = useMemo(
+    () => [
+      { key: ALL_CATEGORIES, label: "All Categories" },
+      ...uniqueValues(productList, (p) => p.category).map((c) => ({ key: c, label: c })),
+    ],
+    [productList]
+  );
+
   // Combined Filtering Logic
   const filteredProducts = useMemo(() => {
     return productList.filter((product) => {
       // Category Filter
       const matchesCategory =
-        selectedCategory === "All" || product.category.toLowerCase() === selectedCategory.toLowerCase();
-
-      // Type Filter
-      const matchesType =
-        selectedType === "All" || product.type.toLowerCase() === selectedType.toLowerCase();
+        selectedCategory === ALL_CATEGORIES ||
+        product.category.trim().toLowerCase() === selectedCategory.toLowerCase();
 
       // Search Query Filter (Matches Name or Active Ingredient)
       const q = searchQuery.trim().toLowerCase();
@@ -84,17 +77,15 @@ export default function ProductsPage() {
         product.ingredient.toLowerCase().includes(q) ||
         product.category.toLowerCase().includes(q);
 
-      return matchesCategory && matchesType && matchesSearch;
+      return matchesCategory && matchesSearch;
     });
-  }, [productList, searchQuery, selectedCategory, selectedType]);
+  }, [productList, searchQuery, selectedCategory]);
 
-  const hasActiveFilters =
-    searchQuery !== "" || selectedCategory !== "All" || selectedType !== "All";
+  const hasActiveFilters = searchQuery !== "" || selectedCategory !== ALL_CATEGORIES;
 
   const handleResetFilters = () => {
     setSearchQuery("");
-    setSelectedCategory("All");
-    setSelectedType("All");
+    setSelectedCategory(ALL_CATEGORIES);
   };
 
   // GSAP Animations
@@ -122,11 +113,6 @@ export default function ProductsPage() {
   // Filter change animation helper
   const handleCategorySelect = (cat: string) => {
     setSelectedCategory(cat);
-    animateGrid();
-  };
-
-  const handleTypeSelect = (type: string) => {
-    setSelectedType(type);
     animateGrid();
   };
 
@@ -214,7 +200,7 @@ export default function ProductsPage() {
               {/* Search & Main Filter Controls */}
               <div className="grid gap-6 md:grid-cols-12 items-center">
                 {/* Search Bar Input */}
-                <div className="md:col-span-6 relative">
+                <div className="md:col-span-10 relative">
                   <label htmlFor="product-search" className="sr-only">
                     Search Products
                   </label>
@@ -238,33 +224,6 @@ export default function ProductsPage() {
                         <X className="h-4 w-4" />
                       </button>
                     )}
-                  </div>
-                </div>
-
-                {/* Type Filter Select / Toggle */}
-                <div className="md:col-span-4 flex items-center gap-3">
-                  <span className="text-xs font-bold text-ink/60 uppercase tracking-wider shrink-0 flex items-center gap-1.5">
-                    <Pill className="h-4 w-4 text-accent-700" />
-                    Type:
-                  </span>
-                  <div className="flex flex-1 items-center gap-1 rounded-full border border-divider bg-neutral-100 p-1">
-                    {TYPE_OPTIONS.map((t) => {
-                      const isActive = selectedType === t.key;
-                      return (
-                        <button
-                          key={t.key}
-                          type="button"
-                          onClick={() => handleTypeSelect(t.key)}
-                          className={`flex-1 rounded-full py-1.5 px-2 text-[11px] font-semibold uppercase transition-all duration-200 ${
-                            isActive
-                              ? "brand-gradient text-white shadow-sm"
-                              : "text-ink/70 hover:text-ink"
-                          }`}
-                        >
-                          {t.key}
-                        </button>
-                      );
-                    })}
                   </div>
                 </div>
 
@@ -294,7 +253,7 @@ export default function ProductsPage() {
                     Category:
                   </span>
                   <div className="seg flex-wrap">
-                    {CATEGORY_OPTIONS.map((cat) => (
+                    {categoryOptions.map((cat) => (
                       <button
                         key={cat.key}
                         type="button"

@@ -7,13 +7,14 @@ import { ProductCard } from "@/components/ui/ProductCard";
 import { gsap } from "@/lib/gsap";
 import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
 import { useHoverCapable } from "@/lib/hooks/useHoverCapable";
+import { uniqueValues } from "@/lib/uniqueValues";
 import type { Product } from "@/types";
 
-const CATEGORIES = ["All", "Neurology", "Mental Health", "Cardiology", "Metabolic"];
+const ALL_CATEGORIES = "All";
 
 export function Products() {
   const [productList, setProductList] = useState<Product[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [activeCategory, setActiveCategory] = useState<string>(ALL_CATEGORIES);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const sectionRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -40,10 +41,16 @@ export function Products() {
     };
   }, []);
 
+  // Category tabs are derived from the products returned by the backend
+  const categories = useMemo(
+    () => [ALL_CATEGORIES, ...uniqueValues(productList, (p) => p.category)],
+    [productList]
+  );
+
   const visibleProducts = useMemo(() => {
-    if (activeCategory === "All") return productList;
+    if (activeCategory === ALL_CATEGORIES) return productList;
     return productList.filter(
-      (p) => p.category.toLowerCase() === activeCategory.toLowerCase()
+      (p) => p.category.trim().toLowerCase() === activeCategory.toLowerCase()
     );
   }, [productList, activeCategory]);
 
@@ -115,7 +122,7 @@ export function Products() {
         {/* Categories Tab Bar */}
         <div className="mb-10 flex justify-center">
           <div className="seg flex-wrap">
-            {CATEGORIES.map((category) => (
+            {categories.map((category) => (
               <button
                 key={category}
                 type="button"
@@ -163,7 +170,7 @@ export function Products() {
             <p className="mx-auto mb-6 max-w-md text-sm text-ink/70">
               There are currently no products available under the &ldquo;{activeCategory}&rdquo; category.
             </p>
-            <Button variant="secondary" onClick={() => handleFilterChange("All")}>
+            <Button variant="secondary" onClick={() => handleFilterChange(ALL_CATEGORIES)}>
               View All Products
             </Button>
           </div>
