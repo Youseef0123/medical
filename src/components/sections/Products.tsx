@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState, useEffect } from "react";
+import { PackageOpen } from "lucide-react";
 import { fetchProducts } from "@/lib/strapi";
 import { Button } from "@/components/ui/Button";
 import { ProductCard } from "@/components/ui/ProductCard";
@@ -108,9 +109,15 @@ export function Products() {
           </div>
         ) : (
           <div className="rounded-2xl border border-divider bg-white p-12 text-center shadow-sm">
-            <h3 className="font-heading text-xl font-bold uppercase text-ink">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent-100 text-accent-700">
+              <PackageOpen className="h-8 w-8" />
+            </div>
+            <h3 className="mb-2 font-heading text-2xl font-bold uppercase text-ink">
               No Products Available
             </h3>
+            <p className="mx-auto max-w-md text-sm text-ink/70">
+              There are no products to show right now. Please check back soon.
+            </p>
           </div>
         )}
 
