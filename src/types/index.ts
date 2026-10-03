@@ -48,6 +48,7 @@ export interface HeroSlide {
   title: string;
   description: string;
   cta: string;
+  href?: string;
 }
 
 export interface StatCounter {

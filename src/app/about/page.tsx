@@ -337,20 +337,6 @@ export default function AboutPage() {
                 </p>
               </Card>
             </div>
-
-            {/* Bottom Callout Banner */}
-            <div className="mt-16 rounded-2xl border border-divider bg-white p-8 text-center shadow-md md:p-12">
-              <h3 className="mb-3 font-heading text-2xl font-bold uppercase text-ink">
-                Partner with Medisave Pharma
-              </h3>
-              <p className="mx-auto mb-6 max-w-xl text-base text-ink/80">
-                Discover how our specialized formulations and commitment to clinical
-                quality can support your healthcare facility or pharmacy network.
-              </p>
-              <CtaButton href="/#contact" variant="primary">
-                Contact Our Clinical Team
-              </CtaButton>
-            </div>
           </div>
         </section>
       </main>

@@ -14,10 +14,10 @@ interface HeroProps {
 }
 
 const slideImages = [
-  "/images/hero/brand.jpg",
-  "/images/hero/neurology.jpg",
-  "/images/hero/mental.jpg",
-  "/images/hero/legacy.jpg",
+  "/images/about/hero-about.jpg",
+  "/images/about/vision-mission.jpg",
+  "/images/about/about-intro.jpg",
+  "/images/about/facility.jpg",
 ];
 
 export function Hero({ autoplayMs = 5000 }: HeroProps) {
@@ -90,9 +90,9 @@ export function Hero({ autoplayMs = 5000 }: HeroProps) {
                   <div className="hero-text-animate hero-text-buttons flex flex-wrap gap-4">
                     <CtaButton
                       variant="primary"
-                      href="/about"
+                      href={slide.href || "/about"}
                     >
-                      About Medisave
+                      {slide.cta || "About Medisave"}
                     </CtaButton>
                   </div>
                 </div>
