@@ -16,6 +16,7 @@ export interface Product {
   strength?: string;
   packSize?: string;
   isActive?: boolean;
+  featured?: boolean;
   displayOrder?: number;
 }
 

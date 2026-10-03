@@ -11,6 +11,7 @@ import { uniqueValues } from "@/lib/uniqueValues";
 import type { Product } from "@/types";
 
 const ALL_CATEGORIES = "All";
+const FEATURED_LIMIT = 3;
 
 export function Products() {
   const [productList, setProductList] = useState<Product[]>([]);
@@ -21,11 +22,11 @@ export function Products() {
   const prefersReducedMotion = usePrefersReducedMotion();
   const hoverCapable = useHoverCapable();
 
-  // Fetch real products from Strapi on mount
+  // Homepage shows only the products flagged as featured in Strapi
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
-    fetchProducts()
+    fetchProducts({ featured: true, limit: FEATURED_LIMIT })
       .then((fetched) => {
         if (isMounted) {
           setProductList(fetched || []);
@@ -177,8 +178,8 @@ export function Products() {
         )}
 
         <div className="mt-11 text-center">
-          <Button variant="secondary" onClick={() => (window.location.href = "/products")}>
-            View All Products Catalog
+          <Button variant="secondary" href="/products">
+            Load More
           </Button>
         </div>
       </div>

@@ -28,6 +28,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       ...strapiUploadsPattern(),
       {
+        protocol: "https",
+        hostname: "api.medisavepharma.com",
+        pathname: "/uploads/**",
+      },
+      {
         protocol: "http",
         hostname: "localhost",
         port: "1337",

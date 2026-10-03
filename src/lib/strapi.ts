@@ -194,6 +194,7 @@ export function mapStrapiProduct(raw: any): Product {
     description: item.shortDescription || item.description || "",
     image: imageUrl,
     isActive: item.isActive ?? true,
+    featured: item.featured ?? false,
     displayOrder: item.displayOrder ?? 0,
   };
 }
@@ -201,12 +202,17 @@ export function mapStrapiProduct(raw: any): Product {
 /**
  * Fetches active products directly from Strapi API (GET /api/products?filters[isActive][$eq]=true&populate=*&sort=displayOrder:asc).
  */
-export async function fetchProducts(): Promise<Product[]> {
+export async function fetchProducts(
+  options: { featured?: boolean; limit?: number } = {}
+): Promise<Product[]> {
+  let query = "filters[isActive][$eq]=true&populate=*&sort=displayOrder:asc";
+  if (options.featured) query += "&filters[featured][$eq]=true";
+  if (options.limit) query += `&pagination[pageSize]=${options.limit}`;
+
   try {
-    const res = await fetch(
-      `${STRAPI_URL}/api/products?filters[isActive][$eq]=true&populate=*&sort=displayOrder:asc`,
-      { cache: "no-store" }
-    );
+    const res = await fetch(`${STRAPI_URL}/api/products?${query}`, {
+      cache: "no-store",
+    });
 
     if (!res.ok) {
       console.warn("Strapi fetchProducts failed with status:", res.status);
