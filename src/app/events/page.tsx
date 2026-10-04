@@ -26,10 +26,10 @@ type CategoryFilter = EventCategory | "all";
 
 const FILTER_OPTIONS: { key: CategoryFilter; label: string }[] = [
   { key: "all", label: "All Events" },
-  { key: "Celebration", label: "Celebrations" },
+  { key: "Cycle Meeting", label: "Cycle Meetings" },
+  { key: "Group Meeting", label: "Group Meetings" },
+  { key: "Standalone", label: "Standalone" },
   { key: "Conference", label: "Conferences" },
-  { key: "Exhibition", label: "Exhibitions" },
-  { key: "Partnership", label: "Partnerships" },
 ];
 
 interface GalleryPhoto {

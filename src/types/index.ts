@@ -60,7 +60,7 @@ export interface StatCounter {
 }
 
 /** Mirrors the `category` enum on the Strapi Event collection. */
-export type EventCategory = "Celebration" | "Conference" | "Exhibition" | "Partnership";
+export type EventCategory = "Cycle Meeting" | "Group Meeting" | "Standalone" | "Conference";
 
 export interface EventItem {
   id: string;

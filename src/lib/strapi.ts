@@ -268,7 +268,7 @@ export function mapStrapiEvent(raw: any): EventItem {
   return {
     id: String(raw.documentId || raw.id),
     title: item.title || "Medisave Event",
-    category: (item.category || "Celebration") as EventCategory,
+    category: (item.category || "Cycle Meeting") as EventCategory,
     description: item.description || "",
     date: formatEventDate(item.eventDate),
     location: item.location || undefined,
