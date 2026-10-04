@@ -1,4 +1,4 @@
-import type { Job, Product } from "@/types";
+import type { EventCategory, EventItem, Job, Product } from "@/types";
 
 export interface ContactFormData {
   fullName: string;
@@ -229,6 +229,83 @@ export async function fetchProducts(
     return [];
   } catch (error) {
     console.warn("Strapi fetchProducts network error:", error);
+    return [];
+  }
+}
+
+/** Resolves a Strapi media object (v4 or v5 shape) to an absolute URL. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw Strapi payload shape varies (v4 attributes vs v5 flat)
+function toMediaUrl(media: any): string | undefined {
+  const url: unknown = media?.attributes?.url ?? media?.url;
+  if (typeof url !== "string" || !url) return undefined;
+  return url.startsWith("http") ? url : `${STRAPI_URL}${url}`;
+}
+
+/** Formats a Strapi `date` field (YYYY-MM-DD) as e.g. "January 15, 2026". */
+function formatEventDate(value: unknown): string | undefined {
+  if (typeof value !== "string" || !value) return undefined;
+  const date = new Date(`${value}T00:00:00Z`);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+/** Helper function to map Strapi event entry to frontend EventItem interface */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw Strapi payload shape varies (v4 attributes vs v5 flat)
+export function mapStrapiEvent(raw: any): EventItem {
+  const item = raw.attributes || raw;
+
+  const coverImage = toMediaUrl(item.photo?.data ?? item.photo);
+  const galleryRaw = item.gallery?.data ?? item.gallery;
+  const gallery = (Array.isArray(galleryRaw) ? galleryRaw : [])
+    .map(toMediaUrl)
+    .filter((url): url is string => Boolean(url));
+
+  return {
+    id: String(raw.documentId || raw.id),
+    title: item.title || "Medisave Event",
+    category: (item.category || "Celebration") as EventCategory,
+    description: item.description || "",
+    date: formatEventDate(item.eventDate),
+    location: item.location || undefined,
+    coverImage,
+    // Gallery photos drive the masonry grid; fall back to the cover photo
+    images: gallery.length > 0 ? gallery : coverImage ? [coverImage] : [],
+    featured: item.featured ?? false,
+    displayOrder: item.displayOrder ?? 0,
+  };
+}
+
+/**
+ * Fetches events & news directly from Strapi API (GET /api/events?populate=*&sort=displayOrder:asc).
+ * Returns ONLY data from the backend (no mock fallback).
+ */
+export async function fetchEvents(): Promise<EventItem[]> {
+  try {
+    const res = await fetch(
+      `${STRAPI_URL}/api/events?populate=*&sort[0]=displayOrder:asc&sort[1]=eventDate:desc&pagination[pageSize]=100`,
+      { cache: "no-store" }
+    );
+
+    if (!res.ok) {
+      console.warn("Strapi fetchEvents failed with status:", res.status);
+      return [];
+    }
+
+    const json = await res.json();
+    const rawList = json.data;
+
+    if (Array.isArray(rawList)) {
+      return rawList.map(mapStrapiEvent);
+    }
+
+    return [];
+  } catch (error) {
+    console.warn("Strapi fetchEvents network error:", error);
     return [];
   }
 }

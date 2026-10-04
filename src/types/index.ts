@@ -59,18 +59,20 @@ export interface StatCounter {
   format?: "thousand";
 }
 
-export type EventCategory = "all" | "celebrations" | "conferences" | "exhibitions" | "partnerships";
+/** Mirrors the `category` enum on the Strapi Event collection. */
+export type EventCategory = "Celebration" | "Conference" | "Exhibition" | "Partnership";
 
 export interface EventItem {
   id: string;
   title: string;
-  category: Exclude<EventCategory, "all">;
-  categoryLabel: string;
+  category: EventCategory;
   description: string;
-  date: string;
+  date?: string;
   location?: string;
-  coverImage: string;
+  coverImage?: string;
   images: string[];
+  featured: boolean;
+  displayOrder: number;
 }
 
 export type JobType = "Full-time" | "Part-time" | "Internship" | "Contract";
