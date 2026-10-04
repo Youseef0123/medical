@@ -111,11 +111,12 @@ export function About() {
                   Formulated for trust, manufactured for scale
                 </h2>
                 <p className="mb-8 max-w-[56ch] text-base leading-relaxed text-ink/80">
-                  Medisave develops and manufactures pharmaceutical products across
-                  neurology, mental health, cardiology and metabolic care. Every
-                  formula is validated against pharmacopeial standard before it
-                  reaches a pharmacy shelf, and every batch is traceable from raw
-                  material to patient.
+                  Medisave Pharma is a national pharmaceutical company driven by a
+                  shared mission: delivering high-standard, specialized medications
+                  tailored to Central Nervous System (CNS) patients across Egypt,
+                  founded in 2013 with a focus on high-quality products. Medisave
+                  quickly earned the trust of healthcare professionals through
+                  reliable products and clinical efficacy.
                 </p>
                 <div>
                   <CtaButton href="/about">

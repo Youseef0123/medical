@@ -17,7 +17,7 @@ const slideImages = [
   "/images/about/hero-about.jpg",
   "/images/about/vision-mission.jpg",
   "/images/about/about-intro.jpg",
-  "/images/about/facility.jpg",
+  "/images/about/hero-medicines.jpg",
 ];
 
 export function Hero({ autoplayMs = 5000 }: HeroProps) {
