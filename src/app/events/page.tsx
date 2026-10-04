@@ -53,6 +53,13 @@ export default function EventsPage() {
   const galleryRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
+  // Deep link from the homepage slider: /events?category=Standalone#gallery
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("category");
+    const match = FILTER_OPTIONS.find((opt) => opt.key === requested);
+    if (match) setActiveCategory(match.key);
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
     fetchEvents()
@@ -239,7 +246,7 @@ export default function EventsPage() {
         </section>
 
         {/* ── 2. Interactive Filter Bar & Masonry Gallery ─────────────── */}
-        <section className="px-5 py-16 sm:px-8 md:py-24">
+        <section id="gallery" className="scroll-mt-24 px-5 py-16 sm:px-8 md:py-24">
           <div className="mx-auto max-w-[1200px]">
             {/* Filter Bar */}
             <div className="mb-12 flex flex-col items-center justify-between gap-6 sm:flex-row">
