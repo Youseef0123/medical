@@ -524,41 +524,16 @@ img {
 }
 
 
-/* ── Events & News marquee (homepage) ───────────────────────────────── */
-/* The track holds the slide list twice; shifting it by -50% lands exactly
-   on the second copy, so the loop is seamless. Hover pauses it. */
-@keyframes ms-marquee {
+/* ── Events & News panels (homepage) ────────────────────────────────── */
+/* Thin bar across the open panel that fills over one autoplay interval. */
+@keyframes ms-panelProgress {
   from {
-    transform: translateX(0);
+    width: 0;
   }
   to {
-    transform: translateX(-50%);
+    width: 100%;
   }
 }
-
-.events-marquee {
-  overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
-}
-.events-marquee-track {
-  display: flex;
-  width: max-content;
-  animation: ms-marquee var(--marquee-duration, 40s) linear infinite;
-}
-.events-marquee:hover .events-marquee-track,
-.events-marquee:focus-within .events-marquee-track {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .events-marquee {
-    overflow-x: auto;
-    mask-image: none;
-  }
-  .events-marquee-track {
-    animation: none !important;
-  }
-  .events-marquee-dup {
-    display: none !important;
-  }
+.events-panel-progress {
+  animation: ms-panelProgress var(--progress-duration, 5000ms) linear forwards;
 }

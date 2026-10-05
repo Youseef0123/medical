@@ -1,4 +1,5 @@
 import type { EventCategory, EventItem, Job, Product } from "@/types";
+import { mockEvents } from "@/data/events.mock";
 
 export interface ContactFormData {
   fullName: string;
@@ -299,13 +300,15 @@ export async function fetchEvents(): Promise<EventItem[]> {
     const json = await res.json();
     const rawList = json.data;
 
-    if (Array.isArray(rawList)) {
-      return rawList.map(mapStrapiEvent);
-    }
-
-    return [];
+    const events = Array.isArray(rawList) ? rawList.map(mapStrapiEvent) : [];
+    return events.length > 0 ? events : devFallbackEvents();
   } catch (error) {
     console.warn("Strapi fetchEvents network error:", error);
-    return [];
+    return devFallbackEvents();
   }
+}
+
+/** Sample events for `next dev` only — production builds always return []. */
+function devFallbackEvents(): EventItem[] {
+  return process.env.NODE_ENV === "development" ? mockEvents : [];
 }
