@@ -245,7 +245,86 @@ export default function EventsPage() {
           </div>
         </section>
 
-        {/* ── 2. Interactive Filter Bar & Masonry Gallery ─────────────── */}
+        {/* ── 2. Featured Events (first, above the gallery) ──────────────── */}
+        {featuredEvents.length > 0 && (
+          <section id="event-summary" ref={cardsRef} className="bg-neutral-100 px-5 py-20 sm:px-8 md:py-28">
+            <div className="mx-auto max-w-[1200px]">
+              <div className="mb-14 text-center">
+                <span className="mb-3 block text-xs font-semibold uppercase tracking-[0.1em] text-accent-700">
+                  Summary & Insights
+                </span>
+                <h2 className="font-heading text-3xl font-bold uppercase tracking-tight text-ink sm:text-4xl">
+                  Featured Corporate Events
+                </h2>
+              </div>
+  
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                {featuredEvents.map((event) => (
+                  <Card
+                    key={event.id}
+                    className="event-card group flex flex-col justify-between overflow-hidden p-0 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
+                  >
+                    <div className="relative aspect-16/9 w-full overflow-hidden bg-neutral-900">
+                      {event.coverImage && (
+                        <Image
+                          src={event.coverImage}
+                          alt={event.title}
+                          fill
+                          sizes="(min-width: 768px) 50vw, 100vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent" />
+                      <div className="absolute top-4 left-4">
+                        <Tag variant="accent">{event.category}</Tag>
+                      </div>
+                    </div>
+  
+                    <div className="flex flex-1 flex-col justify-between p-6 sm:p-8">
+                      <div>
+                        <div className="mb-3 flex flex-wrap items-center gap-4 text-xs text-ink/60">
+                          {event.date && (
+                            <span className="flex items-center gap-1.5">
+                              <Calendar className="h-4 w-4 text-accent-700" />
+                              {event.date}
+                            </span>
+                          )}
+                          {event.location && (
+                            <span className="flex items-center gap-1.5">
+                              <MapPin className="h-4 w-4 text-accent-700" />
+                              {event.location}
+                            </span>
+                          )}
+                        </div>
+  
+                        <h3 className="mb-3 font-heading text-xl font-bold uppercase text-ink">
+                          {event.title}
+                        </h3>
+                        <p className="mb-6 text-sm leading-relaxed text-ink/80">
+                          {event.description}
+                        </p>
+                      </div>
+  
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveCategory(event.category);
+                          document.getElementById("gallery")?.scrollIntoView({ behavior: "smooth" });
+                        }}
+                        className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-accent-700 transition-colors hover:text-accent-800"
+                      >
+                        <span>View Gallery Photos ({event.images.length})</span>
+                        <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── 3. Interactive Filter Bar & Masonry Gallery ─────────────── */}
         <section id="gallery" className="scroll-mt-24 px-5 py-16 sm:px-8 md:py-24">
           <div className="mx-auto max-w-[1200px]">
             {/* Filter Bar */}
@@ -356,85 +435,6 @@ export default function EventsPage() {
             )}
           </div>
         </section>
-
-        {/* ── 3. Event Cards Section (Detailed Summary) ────────────────── */}
-        {featuredEvents.length > 0 && (
-          <section id="event-summary" ref={cardsRef} className="bg-neutral-100 px-5 py-20 sm:px-8 md:py-28">
-            <div className="mx-auto max-w-[1200px]">
-              <div className="mb-14 text-center">
-                <span className="mb-3 block text-xs font-semibold uppercase tracking-[0.1em] text-accent-700">
-                  Summary & Insights
-                </span>
-                <h2 className="font-heading text-3xl font-bold uppercase tracking-tight text-ink sm:text-4xl">
-                  Featured Corporate Events
-                </h2>
-              </div>
-  
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                {featuredEvents.map((event) => (
-                  <Card
-                    key={event.id}
-                    className="event-card group flex flex-col justify-between overflow-hidden p-0 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
-                  >
-                    <div className="relative aspect-16/9 w-full overflow-hidden bg-neutral-900">
-                      {event.coverImage && (
-                        <Image
-                          src={event.coverImage}
-                          alt={event.title}
-                          fill
-                          sizes="(min-width: 768px) 50vw, 100vw"
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent" />
-                      <div className="absolute top-4 left-4">
-                        <Tag variant="accent">{event.category}</Tag>
-                      </div>
-                    </div>
-  
-                    <div className="flex flex-1 flex-col justify-between p-6 sm:p-8">
-                      <div>
-                        <div className="mb-3 flex flex-wrap items-center gap-4 text-xs text-ink/60">
-                          {event.date && (
-                            <span className="flex items-center gap-1.5">
-                              <Calendar className="h-4 w-4 text-accent-700" />
-                              {event.date}
-                            </span>
-                          )}
-                          {event.location && (
-                            <span className="flex items-center gap-1.5">
-                              <MapPin className="h-4 w-4 text-accent-700" />
-                              {event.location}
-                            </span>
-                          )}
-                        </div>
-  
-                        <h3 className="mb-3 font-heading text-xl font-bold uppercase text-ink">
-                          {event.title}
-                        </h3>
-                        <p className="mb-6 text-sm leading-relaxed text-ink/80">
-                          {event.description}
-                        </p>
-                      </div>
-  
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setActiveCategory(event.category);
-                          window.scrollTo({ top: 450, behavior: "smooth" });
-                        }}
-                        className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-accent-700 transition-colors hover:text-accent-800"
-                      >
-                        <span>View Gallery Photos ({event.images.length})</span>
-                        <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </button>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
 
         {/* ── 4. Interactive Lightbox Modal ──────────────────────────── */}
         {selectedPhotoIndex !== null && currentLightboxPhoto && (

@@ -1,9 +1,10 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, useEffect } from "react";
+import { useLayoutEffect, useRef, useState, useEffect, type UIEvent } from "react";
 import { PackageOpen } from "lucide-react";
 import { fetchProducts } from "@/lib/strapi";
 import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/cn";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { gsap } from "@/lib/gsap";
 import { usePrefersReducedMotion } from "@/lib/hooks/usePrefersReducedMotion";
@@ -15,6 +16,7 @@ const FEATURED_LIMIT = 3;
 export function Products() {
   const [productList, setProductList] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [activeSlide, setActiveSlide] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -69,14 +71,28 @@ export function Products() {
     return () => ctx.revert();
   }, [prefersReducedMotion, isLoading]);
 
+  // Mobile carousel: the slide nearest the centre drives the dot indicator
+  const handleCarouselScroll = (event: UIEvent<HTMLDivElement>) => {
+    const track = event.currentTarget;
+    const slides = Array.from(track.children) as HTMLElement[];
+    const centre = track.scrollLeft + track.clientWidth / 2;
+    let nearest = 0;
+    slides.forEach((slide, i) => {
+      const distance = Math.abs(slide.offsetLeft + slide.offsetWidth / 2 - centre);
+      const best = Math.abs(slides[nearest].offsetLeft + slides[nearest].offsetWidth / 2 - centre);
+      if (distance < best) nearest = i;
+    });
+    setActiveSlide(nearest);
+  };
+
   return (
-    <section ref={sectionRef} id="products" className="bg-neutral-100 px-5 py-22 sm:px-8">
+    <section ref={sectionRef} id="products" className="bg-neutral-100 px-5 py-16 sm:px-8 sm:py-22">
       <div className="mx-auto max-w-[1200px]">
-        <div className="mb-9 text-center">
+        <div className="mb-8 text-center sm:mb-9">
           <span className="brand-text mb-3 block text-[13px] font-semibold tracking-[0.08em] uppercase">
             Our Products
           </span>
-          <h2 className="text-[32px] font-semibold tracking-tight text-ink uppercase">
+          <h2 className="text-[26px] font-semibold tracking-tight text-ink uppercase sm:text-[32px]">
             Formulations you can rely on
           </h2>
           <span className="brand-gradient mx-auto mt-4 block h-1 w-16 rounded-full" />
@@ -93,20 +109,41 @@ export function Products() {
             </h3>
           </div>
         ) : productList.length > 0 ? (
-          <div
-            ref={gridRef}
-            className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {productList.map((product) => (
-              <div key={product.slug} className="product-card-wrapper">
-                <ProductCard
-                  product={product}
-                  hoverCapable={hoverCapable}
-                  prefersReducedMotion={prefersReducedMotion}
-                />
+          <>
+            {/* Swipeable carousel on phones, grid from sm up */}
+            <div
+              ref={gridRef}
+              onScroll={handleCarouselScroll}
+              className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 scrollbar-none sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-7 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3"
+            >
+              {productList.map((product) => (
+                <div
+                  key={product.slug}
+                  className="product-card-wrapper w-[80%] shrink-0 snap-center sm:w-auto"
+                >
+                  <ProductCard
+                    product={product}
+                    hoverCapable={hoverCapable}
+                    prefersReducedMotion={prefersReducedMotion}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {productList.length > 1 && (
+              <div className="mt-5 flex justify-center gap-2 sm:hidden" aria-hidden>
+                {productList.map((product, i) => (
+                  <span
+                    key={product.slug}
+                    className={cn(
+                      "h-2 rounded-full transition-all duration-300",
+                      i === activeSlide ? "brand-gradient w-6" : "w-2 bg-ink/20"
+                    )}
+                  />
+                ))}
               </div>
-            ))}
-          </div>
+            )}
+          </>
         ) : (
           <div className="rounded-2xl border border-divider bg-white p-12 text-center shadow-sm">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent-100 text-accent-700">
@@ -121,7 +158,7 @@ export function Products() {
           </div>
         )}
 
-        <div className="mt-11 text-center">
+        <div className="mt-8 text-center sm:mt-11">
           <Button variant="secondary" href="/products">
             Load More
           </Button>

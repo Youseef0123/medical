@@ -9,7 +9,7 @@ const SCROLL_IMAGES = [
   { src: "/images/about/research.jpg", alt: "Medisave researcher examining a vial in the lab" },
   { src: "/images/about/quality.jpg", alt: "Quality control inspection of pharmaceutical tablets" },
   { src: "/images/about/manufacturing.jpg", alt: "Automated pharmaceutical packaging line" },
-  { src: "/images/about/facility.jpg", alt: "Medisave facility exterior" },
+  { src: "/images/about/about-cns.jpg", alt: "Anatomical model of the human brain — Medisave specializes in CNS medications" },
 ];
 
 export function About() {
