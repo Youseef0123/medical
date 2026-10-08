@@ -38,9 +38,9 @@ export function Header() {
           <Image
             src="/images/logo-dark.png"
             alt="Medisave"
-            width={132}
-            height={36}
-            className="h-8 w-auto object-contain transition-transform duration-500 hover:scale-105"
+            width={176}
+            height={48}
+            className="h-8 lg:h-11 w-auto object-contain transition-transform duration-500 hover:scale-105"
             priority
           />
         </Link>
