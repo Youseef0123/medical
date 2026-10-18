@@ -40,7 +40,7 @@ export function Header() {
             alt="Medisave"
             width={220}
             height={60}
-            className="h-8 lg:h-14 w-auto object-contain transition-transform duration-500 hover:scale-105"
+            className="h-10 lg:h-16 w-auto object-contain transition-transform duration-500 hover:scale-105"
             priority
           />
         </Link>

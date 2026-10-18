@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Tag } from "@/components/ui/Tag";
+import { RichText } from "@/components/ui/RichText";
 import { submitJobApplication } from "@/lib/strapi";
 import type { Job } from "@/types";
 import {
@@ -224,7 +225,7 @@ export function ApplyModal({ job, isOpen, onClose }: ApplyModalProps) {
             <h3 className="text-xs font-bold uppercase tracking-wider text-accent-700 mb-2">
               Job Description
             </h3>
-            <p className="text-sm leading-relaxed text-ink/80">{job.description}</p>
+            <RichText content={job.description} />
           </div>
 
           {/* Responsibilities */}

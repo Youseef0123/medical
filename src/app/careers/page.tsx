@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Tag } from "@/components/ui/Tag";
 import { ApplyModal } from "@/components/ui/ApplyModal";
+import { markdownToPlainText } from "@/components/ui/RichText";
 import { CustomSelect } from "@/components/ui/CustomSelect";
 import { gsap } from "@/lib/gsap";
 import { fetchOpenJobs } from "@/lib/strapi";
@@ -385,8 +386,8 @@ export default function CareersPage() {
                           {job.title}
                         </h3>
 
-                        <p className="text-sm leading-relaxed text-ink/75">
-                          {job.description}
+                        <p className="line-clamp-3 text-sm leading-relaxed text-ink/75">
+                          {markdownToPlainText(job.description)}
                         </p>
                       </div>
 

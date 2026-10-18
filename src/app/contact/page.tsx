@@ -516,13 +516,13 @@ export default function ContactPage() {
             <div className="blueprint relative aspect-21/9 min-h-[320px] w-full overflow-hidden rounded-2xl border border-divider shadow-md">
               <iframe
                 title="Medisave Pharma Location Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3451.9868778007055!2d31.3789!3d30.0965!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14581604a11f2df9%3A0x8e833fb359f4df91!2sMasaken%20Sheraton%2C%20Al%20Matar%2C%20El%20Nozha%2C%20Cairo%20Governorate!5e0!3m2!1sen!2seg!4v1700000000000!5m2!1sen!2seg"
+                src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3451.7003518763327!2d31.377335!3d30.102767000000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMzDCsDA2JzEwLjAiTiAzMcKwMjInMzguNCJF!5e0!3m2!1sar!2seg!4v1792342140352!5m2!1sar!2seg"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
+                referrerPolicy="strict-origin-when-cross-origin"
                 className="h-full w-full grayscale opacity-90 transition-all duration-500 hover:grayscale-0 hover:opacity-100"
               />
             </div>
